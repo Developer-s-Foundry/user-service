@@ -1,0 +1,14 @@
+[project]
+name = "df-wallet"
+version = "0.1.0"
+description = "Developers Foundry Wallet System"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django-cors-headers>=4.7.0",
+    "django>=5.1.6",
+    "djangorestframework>=3.15.2",
+    "drf-spectacular>=0.28.0",
+    "dependency-injector>=4.45.0",
+    "python-decouple>=3.8",
+]
