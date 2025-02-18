@@ -11,4 +11,35 @@ dependencies = [
     "drf-spectacular>=0.28.0",
     "dependency-injector>=4.45.0",
     "python-decouple>=3.8",
+    "pymongo>=4.11.1",
+    "django-mongodb-backend>=5.1.0b0",
+    "psycopg2-binary>=2.9.10",
+    "redis>=5.2.1",
+    "hiredis>=3.1.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.1.0",
+    "ruff>=0.9.6",
+]
+
+[tool.ruff]
+fix = true
+
+[tool.ruff.lint]
+extend-select = [
+  "UP",  # pyupgrade
+  "I",   # isort
+  "DJ",  # djangolint
+  "T20", # flake8-print
+  "RUF", # ruff
+#   "D",   # pydocstyle
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+length-sort = true
