@@ -2,6 +2,7 @@ from src.env import app
 
 from .apps import INSTALLED_APPS as INSTALLED_APPS
 from .caches import CACHES as CACHES
+from .logger import LOGGING as LOGGING
 from .databases import DATABASES as DATABASES
 from .templates import TEMPLATES as TEMPLATES
 from .middleware import MIDDLEWARE as MIDDLEWARE

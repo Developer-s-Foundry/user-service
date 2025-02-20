@@ -1,28 +1,35 @@
-from src.utils import get_env_variable
+from src import __name__, __version__
+from src.utils.env import get_env_variable
 
 
 class Env:
     @property
-    def isLocal(self):
+    def isLocal(self) -> bool:
         return get_env_variable("ENVIRONMENT") == "local"
 
     @property
-    def isTest(self):
+    def isTest(self) -> bool:
         return get_env_variable("ENVIRONMENT") == "test"
 
     @property
-    def isProd(self):
+    def isProd(self) -> bool:
         return get_env_variable("ENVIRONMENT") == "prod"
 
 
 env = Env()
 
 app = {
+    "name": __name__,
+    "version": __version__,
     "secret_key": get_env_variable("SECRET_KEY"),
     "debug": True if (env.isLocal or env.isTest) else False,
     "allowed_hosts": get_env_variable(
         "ALLOWED_HOSTS", default="*", cast=lambda x: [v.strip() for v in x.split(",")]
     ),
+}
+
+log = {
+    "level": get_env_variable("LOG_LEVEL", default="debug", cast=lambda x: x.upper()),
 }
 
 db = {

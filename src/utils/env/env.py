@@ -9,7 +9,7 @@ ENV_FILE = BASE_DIR / ".env"
 
 
 @cache
-def get_environment():
+def get_environment() -> Config:
     if ENV_FILE.exists():
         return Config(RepositoryEnv(ENV_FILE))
     return decouple_config
