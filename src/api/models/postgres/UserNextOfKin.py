@@ -1,0 +1,33 @@
+from typing import ClassVar
+
+from django.db import models
+
+from api.enums.NextOfKinRelationship import NextOfKinRelationship
+
+from .User import User
+
+
+class UserNextOfKin(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.OneToOneField(
+        User, related_name="next_of_kin", on_delete=models.SET_NULL, null=True
+    )
+    first_name = models.CharField(max_length=255, null=True)
+    last_name = models.CharField(max_length=255, null=True)
+    address = models.CharField(max_length=255, null=True)
+    phone_number = models.CharField(max_length=20, null=True)
+    email = models.EmailField(max_length=255, null=True)
+    relationship = models.CharField(
+        max_length=20, choices=NextOfKinRelationship.choices, null=True
+    )
+    created_at = models.DateField(auto_now_add=True)
+    last_updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        indexes: ClassVar = [
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["last_updated_at"]),
+        ]
+
+    def __str__(self) -> str:
+        return str(self.id)
