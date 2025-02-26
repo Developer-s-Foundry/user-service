@@ -39,6 +39,10 @@ extend-select = [
 #   "D",   # pydocstyle
 ]
 
+ignore = [
+  "DJ001",
+]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
