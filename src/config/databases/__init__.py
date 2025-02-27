@@ -6,3 +6,5 @@ DATABASES = {
     "pg": POSTGRES,
     "mongo": MONGO,
 }
+
+DATABASE_ROUTERS = ["src.config.databases.router.DatabaseRouter"]
