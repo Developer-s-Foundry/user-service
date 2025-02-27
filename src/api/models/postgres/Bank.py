@@ -2,10 +2,12 @@ from typing import ClassVar
 
 from django.db import models
 
-from api.enums.Currency import Currency
+from src.api.enums.Currency import Currency
+
+from ._base import PostgresBaseModel
 
 
-class Bank(models.Model):
+class Bank(PostgresBaseModel):
     id = models.BigAutoField(primary_key=True)
     code = models.CharField(max_length=10)
     name = models.CharField(max_length=255)

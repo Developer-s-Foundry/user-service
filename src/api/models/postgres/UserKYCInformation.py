@@ -2,12 +2,13 @@ from typing import ClassVar
 
 from django.db import models
 
-from api.enums.DocumentType import DocumentType
+from src.api.enums.DocumentType import DocumentType
 
 from .User import User
+from ._base import PostgresBaseModel
 
 
-class UserKYCInformation(models.Model):
+class UserKYCInformation(PostgresBaseModel):
     id = models.BigAutoField(primary_key=True)
     user = models.OneToOneField(
         User, related_name="kyc", on_delete=models.SET_NULL, null=True

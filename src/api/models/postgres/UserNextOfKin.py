@@ -2,12 +2,13 @@ from typing import ClassVar
 
 from django.db import models
 
-from api.enums.NextOfKinRelationship import NextOfKinRelationship
+from src.api.enums.NextOfKinRelationship import NextOfKinRelationship
 
 from .User import User
+from ._base import PostgresBaseModel
 
 
-class UserNextOfKin(models.Model):
+class UserNextOfKin(PostgresBaseModel):
     id = models.BigAutoField(primary_key=True)
     user = models.OneToOneField(
         User, related_name="next_of_kin", on_delete=models.SET_NULL, null=True

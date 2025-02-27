@@ -3,10 +3,11 @@ from typing import ClassVar
 
 from django.db import models
 
+from ._base import PostgresBaseModel
 from .StateLGA import StateLGA
 
 
-class User(models.Model):
+class User(PostgresBaseModel):
     id = models.CharField(max_length=255, primary_key=True, default=uuid.uuid4)
     email = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)

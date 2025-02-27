@@ -1,11 +1,12 @@
 from django.db import models
 
-from api.enums.Currency import Currency
+from src.api.enums.Currency import Currency
 
 from .User import User
+from ._base import PostgresBaseModel
 
 
-class UserWithdrawalInformation(models.Model):
+class UserWithdrawalInformation(PostgresBaseModel):
     id = models.BigAutoField(primary_key=True)
     user = models.OneToOneField(
         User, related_name="", on_delete=models.SET_NULL, null=True
