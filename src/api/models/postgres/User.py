@@ -21,6 +21,7 @@ class User(PostgresBaseModel):
     is_validated = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_enabled = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
     created_at = models.DateField(auto_now_add=True)
     last_updated_at = models.DateField(auto_now=True)
 
