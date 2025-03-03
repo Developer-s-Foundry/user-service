@@ -6,7 +6,7 @@ class ApiConfig(AppConfig):
     name = "src.api"
 
     def ready(self) -> None:
-        from src.utils.svcs.registry import init_registry, close_registry
+        from src.utils.svcs import init_registry, close_registry
 
         init_registry(self)
         close_registry(self)
