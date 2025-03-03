@@ -1,13 +1,20 @@
 from src.utils.svcs import Service
 from src.utils.logger import LoggerInterface
-from src.api.models.postgres import User
+from src.api.models.postgres import User, UserWithdrawalInformation
 from src.api.typing.UserExists import UserExists
-from src.api.typing.AuthSuccess import AuthSuccess
+from src.api.typing.UserSuccess import UserSuccess
 from src.api.repositories.UserRepository import UserRepository
 from src.api.models.serializers.requests.CreateUserRequest import CreateUserRequest
+from src.api.models.serializers.requests.UpdateUserRequest import UpdateUserRequest
 from src.api.models.serializers.requests.AuthenticateUserOtp import AuthenticateUserOtp
+from src.api.repositories.UserWithdrawalInformationRepository import (
+    UserWithdrawalInformationRepository,
+)
 from src.api.models.serializers.requests.AuthenticateUserRequest import (
     AuthenticateUserRequest,
+)
+from src.api.models.serializers.requests.AddWithdrawalAccountRequest import (
+    AddWithdrawalAccountRequest,
 )
 
 from .UtilityService import UtilityService
@@ -58,7 +65,7 @@ class UserService:
 
         return True
 
-    async def authenticate(self, req: AuthenticateUserRequest) -> AuthSuccess:
+    async def authenticate(self, req: AuthenticateUserRequest) -> UserSuccess:
         email: str = req.validated_data["email"]
         password: str = req.validated_data["password"]
 
@@ -110,3 +117,35 @@ class UserService:
         existing_user = await UserRepository.find_by_id(id)
         await UserRepository.update_by_user(existing_user, {"pin": pin})
         return True
+
+    async def update(self, req: UpdateUserRequest) -> UserSuccess:
+        data = req.validated_data
+        id: str = data["id"]
+
+        existing_user = await UserRepository.find_by_id(id)
+        if not existing_user:
+            return {"is_success": False, "message": "User doesn't exist!"}
+
+        updated_user = await UserRepository.update_by_id(id, data)
+        user = UtilityService.sanitize_user_object(updated_user)
+
+        return {"is_success": True, "user": user}
+
+    async def add_withdrawal_account(
+        req: AddWithdrawalAccountRequest,
+    ) -> UserWithdrawalInformation:
+        data = req.validated_data
+        withdrawal_information = await UserWithdrawalInformationRepository.add(
+            UserWithdrawalInformation(**data)
+        )
+        return withdrawal_information
+
+    async def update_withdrawal_account(
+        id: int,
+        req: AddWithdrawalAccountRequest,
+    ) -> None:
+        data = req.validated_data
+        await UserWithdrawalInformationRepository.update_user_account(id, data)
+
+    async def delete_withdrawal_account(id: int) -> None:
+        await UserWithdrawalInformationRepository.delete_user_withdrawal_account(id)

@@ -1,4 +1,4 @@
-from ..models.postgres.User import User
+from ..models.postgres import User
 
 
 class UserRepository:
@@ -8,11 +8,11 @@ class UserRepository:
         return user
 
     @staticmethod
-    async def find_by_id(id: str) -> User:
+    async def find_by_id(id: str) -> User | None:
         return await User.objects.filter(id=id).afirst()
 
     @staticmethod
-    async def find_by_email(email: str) -> User:
+    async def find_by_email(email: str) -> User | None:
         return await User.objects.filter(email=email).afirst()
 
     @staticmethod
@@ -29,7 +29,7 @@ class UserRepository:
 
     @staticmethod
     async def update_by_id(id: str, updates: dict | None = None) -> User:
-        user: User | None = User.objects.filter(id=id).afirst()
+        user = await UserRepository.find_by_id(id)
         if user and updates:
             for key, value in updates.items():
                 setattr(user, key, value)
