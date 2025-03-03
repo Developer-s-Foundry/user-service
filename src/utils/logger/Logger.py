@@ -4,7 +4,11 @@ from collections.abc import Sequence
 
 from src.env import app
 
+from ..svcs.services import Service
+from .LoggerInterface import LoggerInterface
 
+
+@Service(LoggerInterface)
 class Logger:
     def debug(self, message: str, *args: Sequence[Any]) -> None:
         self.__log("debug", message, *args)

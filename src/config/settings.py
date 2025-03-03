@@ -13,7 +13,7 @@ DEBUG = app["debug"]
 ALLOWED_HOSTS = app["allowed_hosts"]
 
 ROOT_URLCONF = "src.config.urls"
-WSGI_APPLICATION = "src.config.wsgi.application"
+ASGI_APPLICATION = "src.config.asgi.application"
 
 
 STATIC_URL = "static/"
