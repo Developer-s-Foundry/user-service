@@ -18,6 +18,7 @@ class User(PostgresBaseModel):
     state_lga = models.ForeignKey(StateLGA, on_delete=models.SET_NULL, null=True)
     profile_picture = models.CharField(max_length=255, null=True)
     tier = models.IntegerField(default=1)
+    pin = models.CharField(max_length=10, null=True)
     is_validated = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_enabled = models.BooleanField(default=False)
