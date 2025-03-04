@@ -4,7 +4,7 @@ from collections.abc import Sequence
 
 from src.env import app
 
-from ..svcs.services import Service
+from ..svcs import Service
 from .LoggerInterface import LoggerInterface
 
 
