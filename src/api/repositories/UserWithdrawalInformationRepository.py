@@ -1,23 +1,31 @@
-from ..models.postgres import UserWithdrawalInformation
+from src.api.models.postgres import UserWithdrawalInformation
+from src.api.models.payload.requests.AddWithdrawalAccountRequest import (
+    AddWithdrawalAccountRequest,
+)
+
+from ._base import BaseRepository
 
 
-class UserWithdrawalInformationRepository:
-    @staticmethod
-    async def add(user_account: UserWithdrawalInformation) -> UserWithdrawalInformation:
-        await user_account.asave()
-        return user_account
+class UserWithdrawalInformationRepository(BaseRepository[UserWithdrawalInformation]):
+    model = UserWithdrawalInformation
 
-    @staticmethod
-    async def find_by_id(id: str) -> UserWithdrawalInformation | None:
-        return await UserWithdrawalInformation.objects.filter(id=id).afirst()
+    @classmethod
+    async def add(
+        cls, user_account_data: AddWithdrawalAccountRequest
+    ) -> UserWithdrawalInformation:
+        return await cls.manager.acreate(**user_account_data.model_dump())
 
-    @staticmethod
-    async def list(user_id: str) -> list[UserWithdrawalInformation]:
-        return await list(UserWithdrawalInformation.objects.filter(user__id=user_id))
+    @classmethod
+    async def find_by_id(cls, id: int) -> UserWithdrawalInformation | None:
+        return await cls.manager.filter(id=id).afirst()
 
-    @staticmethod
+    @classmethod
+    async def list(cls, user_id: str) -> list[UserWithdrawalInformation]:
+        return [info async for info in cls.manager.filter(user__id=user_id)]
+
+    @classmethod
     async def update_user_account(
-        user_account_id: int, updates: dict | None = None
+        cls, user_account_id: int, updates: dict | None = None
     ) -> None:
         user_account = await UserWithdrawalInformationRepository.find_by_id(
             user_account_id
@@ -28,7 +36,8 @@ class UserWithdrawalInformationRepository:
                 setattr(user_account, key, value)
             await user_account.asave()
 
-    @staticmethod
-    async def delete_user_withdrawal_account(account_id: int) -> None:
+    @classmethod
+    async def delete_user_withdrawal_account(cls, account_id: int) -> None:
         account = await UserWithdrawalInformationRepository.find_by_id(account_id)
-        await account.adelete()
+        if account:
+            await account.adelete()

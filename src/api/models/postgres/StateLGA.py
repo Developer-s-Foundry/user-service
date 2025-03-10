@@ -6,10 +6,10 @@ from ._base import PostgresBaseModel
 
 
 class StateLGA(PostgresBaseModel):
-    id = models.BigAutoField(primary_key=True)
-    state = models.CharField(max_length=100)
-    lga = models.CharField(max_length=100)
-    created_at = models.DateField(auto_now_add=True)
+    id: models.BigAutoField = models.BigAutoField(primary_key=True)
+    state: models.CharField = models.CharField(max_length=100)
+    lga: models.CharField = models.CharField(max_length=100)
+    created_at: models.DateField = models.DateField(auto_now_add=True)
 
     class Meta:
         indexes: ClassVar = [

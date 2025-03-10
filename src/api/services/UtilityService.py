@@ -14,14 +14,14 @@ class UtilityService:
         if not input:
             return ""
 
-        salt: bytes = await bcrypt.gensalt(10)
-        hashed_string: bytes = await bcrypt.hashpw(input.encode(), salt)
+        salt: bytes = bcrypt.gensalt(10)
+        hashed_string: bytes = bcrypt.hashpw(input.encode(), salt)
 
         return hashed_string.decode()
 
     @staticmethod
     async def compare_hash(input: str, hash: str) -> bool:
-        is_same = await bcrypt.checkpw(input.encode(), hash.encode())
+        is_same = bcrypt.checkpw(input.encode(), hash.encode())
         return is_same
 
     @staticmethod
@@ -49,7 +49,7 @@ class UtilityService:
                 return string
 
     @staticmethod
-    def sanitize_user_object(user: User | None = None) -> User:
+    def sanitize_user_object(user: User | None = None) -> User | None:
         if not user:
             return None
 

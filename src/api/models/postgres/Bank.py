@@ -8,13 +8,13 @@ from ._base import PostgresBaseModel
 
 
 class Bank(PostgresBaseModel):
-    id = models.BigAutoField(primary_key=True)
-    code = models.CharField(max_length=10)
-    name = models.CharField(max_length=255)
-    currency = models.CharField(
+    id: models.BigAutoField = models.BigAutoField(primary_key=True)
+    code: models.CharField = models.CharField(max_length=10)
+    name: models.CharField = models.CharField(max_length=255)
+    currency: models.CharField = models.CharField(
         max_length=100, choices=Currency.choices, default=Currency.NGN
     )
-    created_at = models.DateField(auto_now_add=True)
+    created_at: models.DateField = models.DateField(auto_now_add=True)
 
     class Meta:
         indexes: ClassVar = [
