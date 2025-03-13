@@ -28,12 +28,15 @@ def get_registry(
     if app_name is None and app_config is None:
         raise ValueError("Either app_name or app_config must be provided")
     if app_name:
-        app_config = apps.get_app_config(app_name)
-        if not hasattr(app_config, "registry") or app_config.registry is None:
+        config = apps.get_app_config(app_name)
+        if not hasattr(config, "registry") or config.registry is None:
             raise RuntimeError(f"Registry not initialized for app '{app_name}'")
-    elif not hasattr(app_config, "registry") or app_config.registry is None:
-        raise RuntimeError("Registry not initialized")
-    return app_config.registry
+        return config.registry
+    if app_config and (
+        hasattr(app_config, "registry") and app_config.registry is not None
+    ):
+        return app_config.registry
+    raise RuntimeError("Registry not initialized")
 
 
 def svcs_from(request: HttpRequest | None = None) -> svcs.Container:
