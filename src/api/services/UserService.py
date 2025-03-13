@@ -1,19 +1,22 @@
 from src.utils.svcs import Service
 from src.utils.logger import LoggerInterface
-from src.api.models.postgres import User, UserWithdrawalInformation
+from src.api.models.postgres import User, Wallet, UserWithdrawalInformation
 from src.api.typing.UserExists import UserExists
+from src.api.typing.UserWallet import UserWallet
 from src.api.typing.UserSuccess import UserSuccess
 from src.api.repositories.UserRepository import UserRepository
-from src.api.models.serializers.requests.CreateUserRequest import CreateUserRequest
-from src.api.models.serializers.requests.UpdateUserRequest import UpdateUserRequest
-from src.api.models.serializers.requests.AuthenticateUserOtp import AuthenticateUserOtp
+from src.api.interfaces.WalletServiceInterface import WalletServiceInterface
+from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
+from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
+from src.api.models.payload.requests.AuthenticateUserOtp import AuthenticateUserOtp
+from src.api.models.payload.requests.CreateWalletRequest import CreateWalletRequest
+from src.api.models.payload.requests.AuthenticateUserRequest import (
+    AuthenticateUserRequest,
+)
 from src.api.repositories.UserWithdrawalInformationRepository import (
     UserWithdrawalInformationRepository,
 )
-from src.api.models.serializers.requests.AuthenticateUserRequest import (
-    AuthenticateUserRequest,
-)
-from src.api.models.serializers.requests.AddWithdrawalAccountRequest import (
+from src.api.models.payload.requests.AddWithdrawalAccountRequest import (
     AddWithdrawalAccountRequest,
 )
 
@@ -22,22 +25,24 @@ from .UtilityService import UtilityService
 
 @Service()
 class UserService:
-    def __init__(self, log: LoggerInterface) -> None:
+    def __init__(
+        self, log: LoggerInterface, wallet_service: WalletServiceInterface
+    ) -> None:
         self.log = log
+        self.wallet_service = wallet_service
 
     async def create(self, req: CreateUserRequest) -> UserExists:
-        data = req.validated_data
-        email: str = data["email"]
-        password: str = data["password"]
+        email = req.email
+        password = req.password
 
         existing_user = await UserRepository.find_by_email(email)
         if existing_user:
             return {"is_exists": True, "user": existing_user}
 
         hashed_password: str = await UtilityService.hash_string(password)
+        req = req.model_copy(update={"password": hashed_password})
 
-        data.update(password=hashed_password)
-        created_user = await UserRepository.add(User(**data))
+        created_user = await UserRepository.add(req)
 
         user = UtilityService.sanitize_user_object(created_user)
 
@@ -47,8 +52,8 @@ class UserService:
         return {"is_exists": False, "user": user}
 
     async def validate_email(self, req: AuthenticateUserOtp) -> bool:
-        email: str = req.validated_data["email"]
-        otp: str = req.validated_data["otp"]
+        email = req.email
+        otp = req.otp
 
         user = await UserRepository.find_by_email(email)
         if not user:
@@ -66,8 +71,8 @@ class UserService:
         return True
 
     async def authenticate(self, req: AuthenticateUserRequest) -> UserSuccess:
-        email: str = req.validated_data["email"]
-        password: str = req.validated_data["password"]
+        email = req.email
+        password = req.password
 
         existing_user = await UserRepository.find_by_email(email)
         if not existing_user:
@@ -108,44 +113,61 @@ class UserService:
 
         return {"is_success": True, "user": user}
 
-    async def get_user_information(id: str) -> User:
+    async def get_user_information(self, id: str) -> User:
         existing_user = await UserRepository.find_by_id(id)
         user = UtilityService.sanitize_user_object(existing_user)
         return user
 
-    async def set_pin(id: str, pin: str) -> bool:
+    async def set_pin(self, id: str, pin: str) -> bool:
         existing_user = await UserRepository.find_by_id(id)
-        await UserRepository.update_by_user(existing_user, {"pin": pin})
-        return True
+        if existing_user:
+            await UserRepository.update_by_user(existing_user, {"pin": pin})
+            return True
+        return False
 
     async def update(self, req: UpdateUserRequest) -> UserSuccess:
-        data = req.validated_data
-        id: str = data["id"]
+        id = req.id
 
         existing_user = await UserRepository.find_by_id(id)
         if not existing_user:
             return {"is_success": False, "message": "User doesn't exist!"}
 
-        updated_user = await UserRepository.update_by_id(id, data)
+        updated_user = await UserRepository.update_by_id(
+            id, req.model_dump(exclude={"id"})
+        )
         user = UtilityService.sanitize_user_object(updated_user)
 
         return {"is_success": True, "user": user}
 
     async def add_withdrawal_account(
+        self,
         req: AddWithdrawalAccountRequest,
     ) -> UserWithdrawalInformation:
-        data = req.validated_data
-        withdrawal_information = await UserWithdrawalInformationRepository.add(
-            UserWithdrawalInformation(**data)
-        )
+        withdrawal_information = await UserWithdrawalInformationRepository.add(req)
         return withdrawal_information
 
     async def update_withdrawal_account(
+        self,
         id: int,
         req: AddWithdrawalAccountRequest,
     ) -> None:
-        data = req.validated_data
-        await UserWithdrawalInformationRepository.update_user_account(id, data)
+        await UserWithdrawalInformationRepository.update_user_account(
+            id, req.model_dump(exclude_unset=True)
+        )
 
-    async def delete_withdrawal_account(id: int) -> None:
+    async def delete_withdrawal_account(self, id: int) -> None:
         await UserWithdrawalInformationRepository.delete_user_withdrawal_account(id)
+
+    # ********** Wallet **********
+
+    async def create_wallet(self, req: CreateWalletRequest) -> UserWallet:
+        user = await self.get_user_information(req.user)
+        req.tier = user.tier
+
+        wallet = await self.wallet_service.create_wallet(req)
+
+        return {"user": user, "wallet": wallet}
+
+    async def list_wallets(self, user_id: str) -> list[Wallet]:
+        wallets = await self.wallet_service.list_wallets(user_id)
+        return wallets

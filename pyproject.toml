@@ -7,8 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "django-cors-headers>=4.7.0",
     "django>=5.1.6",
-    "djangorestframework>=3.15.2",
-    "drf-spectacular>=0.28.0",
     "python-decouple>=3.8",
     "pymongo>=4.11.1",
     "django-mongodb-backend>=5.1.0b0",
