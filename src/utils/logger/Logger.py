@@ -1,29 +1,42 @@
 import logging
-from typing import Any
-from collections.abc import Sequence
 
 from src.env import app
 
 from ..svcs import Service
-from .LoggerInterface import LoggerInterface
 
 
-@Service(LoggerInterface)
+@Service()
 class Logger:
-    def debug(self, message: str, *args: Sequence[Any]) -> None:
-        self.__log(logging.DEBUG, message, *args)
+    def debug(
+        self, message: str, **kwargs: int | str | list | set | dict | tuple | None
+    ) -> None:
+        self.__log(logging.DEBUG, message, **kwargs)
 
-    def info(self, message: str, *args: Sequence[Any]) -> None:
-        self.__log(logging.INFO, message, *args)
+    def info(
+        self, message: str, **kwargs: int | str | list | set | dict | tuple | None
+    ) -> None:
+        self.__log(logging.INFO, message, **kwargs)
 
-    def warn(self, message: str, *args: Sequence[Any]) -> None:
-        self.__log(logging.WARNING, message, *args)
+    def warn(
+        self, message: str, **kwargs: int | str | list | set | dict | tuple | None
+    ) -> None:
+        self.__log(logging.WARNING, message, **kwargs)
 
-    def error(self, message: str, *args: Sequence[Any]) -> None:
-        self.__log(logging.ERROR, message, *args)
+    def error(
+        self, message: str, **kwargs: int | str | list | set | dict | tuple | None
+    ) -> None:
+        self.__log(logging.ERROR, message, **kwargs)
 
-    def __log(self, level: int, message: str, *args: Sequence[Any]) -> None:
-        logging.getLogger().log(level, f"{self.__format_scope} {message}", *args)
+    def __log(
+        self,
+        level: int,
+        message: str,
+        **kwargs: int | str | list | set | dict | tuple | None,
+    ) -> None:
+        logging.getLogger().log(
+            level,
+            f"{self.__format_scope()} {message} {kwargs}",
+        )
 
     def __format_scope(self) -> str:
         return f"[{app['name']} v{app['version']}]"
