@@ -1,5 +1,3 @@
-from typing import ClassVar
-
 from django.db import models
 
 from src.api.enums.Currency import Currency
@@ -17,10 +15,11 @@ class Bank(PostgresBaseModel):
     created_at: models.DateField = models.DateField(auto_now_add=True)
 
     class Meta:
-        indexes: ClassVar = [
+        db_table = "banks"
+        indexes = (
             models.Index(fields=["code"]),
             models.Index(fields=["name"]),
-        ]
+        )
 
     def __str__(self) -> str:
         return str(self.id)

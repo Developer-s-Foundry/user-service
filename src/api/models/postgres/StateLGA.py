@@ -1,5 +1,3 @@
-from typing import ClassVar
-
 from django.db import models
 
 from ._base import PostgresBaseModel
@@ -12,9 +10,8 @@ class StateLGA(PostgresBaseModel):
     created_at: models.DateField = models.DateField(auto_now_add=True)
 
     class Meta:
-        indexes: ClassVar = [
-            models.Index(fields=["state"]),
-        ]
+        db_table = "state_lgas"
+        indexes = (models.Index(fields=["state"]),)
 
     def __str__(self) -> str:
         return str(self.id)

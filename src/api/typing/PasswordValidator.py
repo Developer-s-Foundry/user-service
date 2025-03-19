@@ -3,7 +3,7 @@ from typing import Annotated
 from pydantic import AfterValidator
 
 
-def is_strong_password(password: str) -> bool:
+def is_strong_password(password: str) -> str:
     if len(password) < 8:
         raise ValueError("Password must be at least 8 characters long")
     if not any(char.isdigit() for char in password):
@@ -14,7 +14,7 @@ def is_strong_password(password: str) -> bool:
         raise ValueError("Password must contain at least one lowercase letter")
     if not any(char in "!@#$%^&*()-+" for char in password):
         raise ValueError("Password must contain at least one special character")
-    return True
+    return password
 
 
 IsStrongPassword = Annotated[str, AfterValidator(is_strong_password)]

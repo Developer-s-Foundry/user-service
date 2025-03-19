@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import EmailStr, BaseModel
 
 from src.api.typing.PasswordValidator import IsStrongPassword
 
 
 class AuthenticateUserRequest(BaseModel):
-    email: str
+    email: EmailStr
     password: IsStrongPassword

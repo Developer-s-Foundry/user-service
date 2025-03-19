@@ -57,3 +57,9 @@ cache = {
         "pass": get_env_variable("REDIS_PASSWORD"),
     }
 }
+
+
+jwt_config = {
+    "secret": get_env_variable("JWT_SECRET"),
+    "issuer": get_env_variable("JWT_ISSUER"),
+}

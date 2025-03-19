@@ -1,4 +1,3 @@
-from typing import ClassVar
 from decimal import Decimal
 
 from django.db import models
@@ -31,12 +30,13 @@ class Wallet(PostgresBaseModel):
     last_updated_at: models.DateField = models.DateField(auto_now=True)
 
     class Meta:
-        indexes: ClassVar = [
+        db_table = "wallets"
+        indexes = (
             models.Index(fields=["account_number"]),
             models.Index(fields=["currency"]),
             models.Index(fields=["is_active"]),
             models.Index(fields=["is_enabled"]),
-        ]
+        )
 
     def __str__(self) -> str:
         return str(self.id)

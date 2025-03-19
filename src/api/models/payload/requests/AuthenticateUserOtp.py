@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic import EmailStr, BaseModel
 
 
 class AuthenticateUserOtp(BaseModel):
-    email: str
+    email: EmailStr
     otp: str

@@ -1,5 +1,4 @@
 import uuid
-from typing import ClassVar
 
 from django.db import models
 
@@ -17,12 +16,13 @@ class User(PostgresBaseModel):
     last_name: models.CharField = models.CharField(max_length=255)
     address: models.CharField = models.CharField(max_length=255)
     phone_number: models.CharField = models.CharField(max_length=20)
-    state_lga: models.ForeignKey = models.ForeignKey(
+    state_lga: models.ForeignKey[StateLGA, None] = models.ForeignKey(
         StateLGA, on_delete=models.SET_NULL, null=True
     )
     profile_picture: models.CharField = models.CharField(max_length=255, null=True)
     tier: models.IntegerField = models.IntegerField(default=1)
     pin: models.CharField = models.CharField(max_length=10, null=True)
+    otp: models.CharField = models.CharField(max_length=10, null=True)
     is_validated: models.BooleanField = models.BooleanField(default=False)
     is_active: models.BooleanField = models.BooleanField(default=False)
     is_enabled: models.BooleanField = models.BooleanField(default=False)
@@ -31,7 +31,8 @@ class User(PostgresBaseModel):
     last_updated_at: models.DateField = models.DateField(auto_now=True)
 
     class Meta:
-        indexes: ClassVar = [
+        db_table = "users"
+        indexes = (
             models.Index(fields=["first_name"]),
             models.Index(fields=["last_name"]),
             models.Index(fields=["tier"]),
@@ -40,7 +41,7 @@ class User(PostgresBaseModel):
             models.Index(fields=["is_enabled"]),
             models.Index(fields=["created_at"]),
             models.Index(fields=["last_updated_at"]),
-        ]
+        )
 
     def __str__(self) -> str:
         return self.id

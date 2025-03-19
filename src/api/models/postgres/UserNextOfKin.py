@@ -1,5 +1,3 @@
-from typing import ClassVar
-
 from django.db import models
 
 from src.api.enums.NextOfKinRelationship import NextOfKinRelationship
@@ -25,10 +23,11 @@ class UserNextOfKin(PostgresBaseModel):
     last_updated_at: models.DateField = models.DateField(auto_now=True)
 
     class Meta:
-        indexes: ClassVar = [
+        db_table = "users_nest_of_kin"
+        indexes = (
             models.Index(fields=["created_at"]),
             models.Index(fields=["last_updated_at"]),
-        ]
+        )
 
     def __str__(self) -> str:
         return str(self.id)

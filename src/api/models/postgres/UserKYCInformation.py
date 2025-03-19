@@ -1,5 +1,3 @@
-from typing import ClassVar
-
 from django.db import models
 
 from src.api.enums.DocumentType import DocumentType
@@ -26,12 +24,13 @@ class UserKYCInformation(PostgresBaseModel):
     last_updated_at: models.DateField = models.DateField(auto_now=True)
 
     class Meta:
-        indexes: ClassVar = [
+        db_table = "users_kyc_information"
+        indexes = (
             models.Index(fields=["is_bvn_verified"]),
             models.Index(fields=["is_document_verified"]),
             models.Index(fields=["created_at"]),
             models.Index(fields=["last_updated_at"]),
-        ]
+        )
 
     def __str__(self) -> str:
         return str(self.id)

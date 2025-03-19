@@ -1,12 +1,11 @@
 from src.utils.svcs import Service
 from src.api.models.postgres import Wallet
 from src.api.repositories.WalletRepository import WalletRepository
-from src.api.interfaces.WalletServiceInterface import WalletServiceInterface
 from src.api.repositories.WalletLimitRepository import WalletLimitRepository
 from src.api.models.payload.requests.CreateWalletRequest import CreateWalletRequest
 
 
-@Service(WalletServiceInterface)
+@Service()
 class WalletService:
     async def __generate_account_number(self) -> str:
         total_number_of_existing_accounts = await WalletRepository.count()

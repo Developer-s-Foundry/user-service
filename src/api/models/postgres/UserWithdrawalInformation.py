@@ -8,8 +8,8 @@ from ._base import PostgresBaseModel
 
 class UserWithdrawalInformation(PostgresBaseModel):
     id: models.BigAutoField = models.BigAutoField(primary_key=True)
-    user: models.OneToOneField = models.OneToOneField(
-        User, related_name="", on_delete=models.SET_NULL, null=True
+    user: models.ForeignKey = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="withdrawal_informations"
     )
     currency: models.CharField = models.CharField(
         max_length=100, choices=Currency.choices, default=Currency.NGN
@@ -20,6 +20,9 @@ class UserWithdrawalInformation(PostgresBaseModel):
     account_name: models.CharField = models.CharField(max_length=255)
     created_at: models.DateField = models.DateField(auto_now_add=True)
     last_updated_at: models.DateField = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = "users_withdrawal_information"
 
     def __str__(self) -> str:
         return str(self.id)

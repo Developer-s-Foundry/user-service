@@ -7,3 +7,4 @@ class UserSuccess(TypedDict):
     is_success: bool
     message: NotRequired[str]
     user: NotRequired[User]
+    token: NotRequired[str]

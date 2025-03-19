@@ -4,7 +4,6 @@ from src.api.enums.Currency import Currency
 
 
 class AddWithdrawalAccountRequest(BaseModel):
-    user: str
     bank_name: str
     bank_code: str
     account_number: str
