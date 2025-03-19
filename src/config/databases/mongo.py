@@ -1,6 +1,6 @@
 from src.env import db, env
 
-mongo = db.get("mongo")
+mongo = db["mongo"]
 
 
 host_scheme = "mongodb+srv://" if (not env.isLocal and not env.isTest) else "mongodb://"

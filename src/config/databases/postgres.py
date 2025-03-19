@@ -1,6 +1,6 @@
 from src.env import db, env
 
-pg = db.get("pg")
+pg = db["pg"]
 
 POSTGRES = {
     "NAME": pg["database"],

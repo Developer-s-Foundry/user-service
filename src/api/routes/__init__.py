@@ -3,7 +3,7 @@ from django.http import HttpRequest
 
 from src import __version__ as version
 
-api = NinjaAPI(version=version)
+api: NinjaAPI = NinjaAPI(version=version)
 
 
 @api.get("/")

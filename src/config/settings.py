@@ -7,7 +7,6 @@ from .databases import DATABASES as DATABASES
 from .databases import DATABASE_ROUTERS as DATABASE_ROUTERS
 from .templates import TEMPLATES as TEMPLATES
 from .middleware import MIDDLEWARE as MIDDLEWARE
-from .rest_framework import REST_FRAMEWORK as REST_FRAMEWORK
 
 SECRET_KEY = app["secret_key"]
 DEBUG = app["debug"]

@@ -1,6 +1,6 @@
 from src.env import env, cache
 
-redis = cache.get("redis")
+redis = cache["redis"]
 redis_scheme = "rediss://" if (not env.isLocal and not env.isTest) else "redis://"
 
 REDIS = {
