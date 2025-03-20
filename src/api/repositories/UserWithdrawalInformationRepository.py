@@ -17,7 +17,7 @@ class UserWithdrawalInformationRepository(BaseRepository[UserWithdrawalInformati
 
     @classmethod
     async def find_by_id(cls, id: int) -> UserWithdrawalInformation | None:
-        return await cls.manager.filter(id=id).afirst()
+        return await cls.manager.filter(id=id).select_related("user").afirst()
 
     @classmethod
     async def find_by_user_and_id(

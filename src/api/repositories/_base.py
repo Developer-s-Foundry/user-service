@@ -1,13 +1,13 @@
 from typing import Generic, TypeVar
 
-from django.db.models import Model, Manager
+from django.db.models import Model, BaseManager
 
 T = TypeVar("T", bound=Model)
 
 
 class BaseRepository(Generic[T]):
     model: type[T]
-    manager: Manager[T]
+    manager: BaseManager[T]
 
     def __init_subclass__(cls, **kwargs: dict) -> None:
         super().__init_subclass__(**kwargs)

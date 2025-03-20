@@ -1,3 +1,5 @@
+from typing import Any
+
 from src import __name__, __version__
 from src.utils.env import get_env_variable
 
@@ -18,7 +20,7 @@ class Env:
 
 env = Env()
 
-app = {
+app: dict[str, str | bool | dict[str, list]] = {
     "name": __name__,
     "version": __version__,
     "secret_key": get_env_variable("SECRET_KEY"),
@@ -28,11 +30,11 @@ app = {
     ),
 }
 
-log = {
+log: dict[str, Any] = {
     "level": get_env_variable("LOG_LEVEL", default="debug", cast=lambda x: x.upper()),
 }
 
-db = {
+db: dict[str, dict[str, str | int]] = {
     "mongo": {
         "host": get_env_variable("MONGODB_HOST"),
         "port": get_env_variable("MONGODB_PORT", cast=int),
@@ -49,7 +51,7 @@ db = {
     },
 }
 
-cache = {
+cache: dict[str, dict[str, str | int]] = {
     "redis": {
         "host": get_env_variable("REDIS_HOST"),
         "port": get_env_variable("REDIS_PORT", cast=int),
@@ -59,7 +61,7 @@ cache = {
 }
 
 
-jwt_config = {
+jwt_config: dict[str, Any] = {
     "secret": get_env_variable("JWT_SECRET"),
     "issuer": get_env_variable("JWT_ISSUER"),
 }

@@ -33,9 +33,9 @@ class Logger:
         message: str,
         **kwargs: int | str | list | set | dict | tuple | None,
     ) -> None:
-        logging.getLogger().log(
+        logging.getLogger("df_wallet").log(
             level,
-            f"{self.__format_scope()} {message} {kwargs}",
+            f"{self.__format_scope()} {message} {kwargs if kwargs else ''}",
         )
 
     def __format_scope(self) -> str:

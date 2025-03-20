@@ -8,7 +8,9 @@ from .StateLGA import StateLGA
 
 class User(PostgresBaseModel):
     id: models.CharField = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4
+        max_length=255,
+        primary_key=True,
+        default=uuid.uuid4,  # type: ignore
     )
     email: models.EmailField = models.EmailField(max_length=255, unique=True)
     password: models.CharField = models.CharField(max_length=255)
@@ -16,7 +18,7 @@ class User(PostgresBaseModel):
     last_name: models.CharField = models.CharField(max_length=255)
     address: models.CharField = models.CharField(max_length=255)
     phone_number: models.CharField = models.CharField(max_length=20)
-    state_lga: models.ForeignKey[StateLGA, None] = models.ForeignKey(
+    state_lga: models.ForeignKey = models.ForeignKey(
         StateLGA, on_delete=models.SET_NULL, null=True
     )
     profile_picture: models.CharField = models.CharField(max_length=255, null=True)

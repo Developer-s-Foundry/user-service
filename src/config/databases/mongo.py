@@ -10,7 +10,7 @@ MONGO = {
     "ENGINE": "django_mongodb_backend",
     "USER": mongo["user"],
     "PASSWORD": mongo["pass"],
-    "HOST": host_scheme + mongo["host"],
+    "HOST": host_scheme + str(mongo["host"]),
     "PORT": mongo["port"],
     "OPTIONS": {
         "retryWrites": "true",
