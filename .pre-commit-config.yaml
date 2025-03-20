@@ -12,4 +12,3 @@ repos:
     rev: v1.1.397
     hooks:
       - id: pyright
-        additional_dependencies: [django-stubs, django-types]

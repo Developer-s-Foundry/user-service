@@ -24,7 +24,13 @@ class AuthService:
 
         existing_user = await UserRepository.find_by_email(email)
         if existing_user:
-            return {"is_exists": True, "user": existing_user}
+            message = "Email already registered"
+            self.logger.info(message, email=existing_user.email)  # type: ignore
+            return {
+                "is_exists": True,
+                "user": existing_user,
+                "message": message,
+            }
 
         hashed_password: str = await self.utility_service.hash_string(password)
         req = req.model_copy(update={"password": hashed_password})
@@ -37,7 +43,13 @@ class AuthService:
 
         user = self.utility_service.sanitize_user_object(created_user)
 
-        return {"is_exists": False, "user": user}
+        message = "User registration successful"
+        self.logger.info(message, email=user.email)  # type: ignore
+        return {
+            "is_exists": False,
+            "user": user,
+            "message": message,
+        }
 
     async def validate_email(self, req: AuthenticateUserOtp) -> bool:
         email = req.email
@@ -68,41 +80,55 @@ class AuthService:
 
         existing_user = await UserRepository.find_by_email(email)
         if not existing_user:
-            return {"is_success": False, "message": "Invalid email or password"}
+            message = "Invalid email or password"
+            self.logger.info(message)
+            return {"is_success": False, "message": message}
 
         is_password_check_ok = await self.utility_service.compare_hash(
             password, existing_user.password
         )
         if not is_password_check_ok:
-            return {"is_success": False, "message": "Invalid email or password"}
+            message = "Invalid email or password"
+            self.logger.info(message, email=existing_user.email)  # type:ignore
+            return {"is_success": False, "message": message}
 
         if not existing_user.is_validated:
             # resend otp
+            message = "User account not validated. Please check your email for further instructions"
+            self.logger.info(message, email=existing_user.email)  # type:ignore
             return {
                 "is_success": False,
-                "message": "User account not validated. Please check your email for further instructions",
+                "message": message,
             }
 
         if not existing_user.is_active:
+            message = "User account is inactive. Please contact support"
+            self.logger.info(message, email=existing_user.email)  # type:ignore
             return {
                 "is_success": False,
-                "message": "User account inactive. Please contact support",
+                "message": message,
             }
 
         if not existing_user.is_enabled:
+            message = "User account is disabled. Please contact support"
+            self.logger.info(message, email=existing_user.email)  # type:ignore
             return {
                 "is_success": False,
-                "message": "User account disabled. Please contact support",
+                "message": message,
             }
 
         if existing_user.is_deleted:
+            message = "User account has been deleted. Please contact support if you want to restore your account"
+            self.logger.info(message, email=existing_user.email)  # type:ignore
             return {
                 "is_success": False,
-                "message": "User account has been deleted. Please contact support if you want to restore your account",
+                "message": message,
             }
 
         user = self.utility_service.sanitize_user_object(existing_user)
+        self.logger.debug("User object was sanitized")  # type:ignore
 
         jwt_details = self.utility_service.generate_jwt(user.email, user.id)
+        self.logger.debug("User JWT was generated")  # type:ignore
 
         return {"is_success": True, "user": user, "token": jwt_details}

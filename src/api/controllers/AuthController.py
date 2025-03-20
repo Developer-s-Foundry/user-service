@@ -3,6 +3,7 @@ from http import HTTPStatus
 from ninja.errors import HttpError
 
 from src.utils.svcs import Service
+from src.utils.logger import Logger
 from src.api.models.postgres import User
 from src.api.services.AuthService import AuthService
 from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
@@ -14,23 +15,44 @@ from src.api.models.payload.requests.AuthenticateUserRequest import (
 
 @Service()
 class AuthController:
-    def __init__(self, auth_service: AuthService) -> None:
+    def __init__(self, logger: Logger, auth_service: AuthService) -> None:
+        self.logger = logger
         self.auth_service = auth_service
 
     async def register(self, user_data: CreateUserRequest) -> User:
-        user_exists = await self.auth_service.register(user_data)
-        if user_exists["is_exists"]:
-            raise HttpError(HTTPStatus.BAD_REQUEST, "User already exists")
-        return user_exists["user"]
+        try:
+            user_exists = await self.auth_service.register(user_data)
+            if user_exists["is_exists"]:
+                raise HttpError(HTTPStatus.BAD_REQUEST, user_exists["message"])
+            return user_exists["user"]
+        except Exception as exc:
+            if isinstance(exc, HttpError):
+                raise
+            self.logger.error(str(exc))
+            raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
     async def validate_email(self, credentials: AuthenticateUserOtp) -> dict:
-        is_valid = await self.auth_service.validate_email(credentials)
-        if not is_valid:
-            raise HttpError(HTTPStatus.BAD_REQUEST, "User email verification failed")
-        return {"message": "User email verification successful"}
+        try:
+            is_valid = await self.auth_service.validate_email(credentials)
+            if not is_valid:
+                raise HttpError(
+                    HTTPStatus.BAD_REQUEST, "User email verification failed"
+                )
+            return {"message": "User email verification successful"}
+        except Exception as exc:
+            if isinstance(exc, HttpError):
+                raise
+            self.logger.error(str(exc))
+            raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
     async def login(self, credentials: AuthenticateUserRequest) -> dict:
-        auth_user = await self.auth_service.login(credentials)
-        if not auth_user["is_success"]:
-            raise HttpError(HTTPStatus.BAD_REQUEST, auth_user["message"])
-        return {"user": auth_user["user"], "token": auth_user["token"]}
+        try:
+            auth_user = await self.auth_service.login(credentials)
+            if not auth_user["is_success"]:
+                raise HttpError(HTTPStatus.BAD_REQUEST, auth_user["message"])
+            return {"user": auth_user["user"], "token": auth_user["token"]}
+        except Exception as exc:
+            if isinstance(exc, HttpError):
+                raise
+            self.logger.error(str(exc))
+            raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")

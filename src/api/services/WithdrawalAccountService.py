@@ -57,6 +57,16 @@ class WithdrawalAccountService:
             user, id, req.model_dump(exclude_unset=True)
         )
 
+    async def get_withdrawal_account(self, user_id: str, id: int) -> AccountSuccess:
+        withdrawal_account = await UserWithdrawalInformationRepository.find_by_id(id)
+        if not withdrawal_account:
+            return {"is_success": False, "message": "Account not found!"}
+
+        if withdrawal_account.user.id != user_id:  # type: ignore
+            return {"is_success": False, "message": "Unauthorized request!"}
+
+        return {"is_success": True, "account": withdrawal_account}
+
     async def fetch_withdrawal_accounts(
         self, user_id: str
     ) -> list[UserWithdrawalInformation]:
@@ -68,16 +78,10 @@ class WithdrawalAccountService:
             id
         )
         if not account_already_exists:
-            return {
-                "is_success": False,
-                "message": "Account not found!",
-            }
+            return {"is_success": False, "message": "Account not found!"}
 
         if account_already_exists.user.id != user_id:  # type: ignore
-            return {
-                "is_success": False,
-                "message": "Unauthorized request!",
-            }
+            return {"is_success": False, "message": "Unauthorized request!"}
 
         await UserWithdrawalInformationRepository.delete_user_withdrawal_account(id)
         return {
