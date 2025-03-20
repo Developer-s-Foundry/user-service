@@ -1,5 +1,7 @@
 from typing import TypeVar, get_type_hints
 
+from asgiref.sync import async_to_sync
+
 from src.utils.svcs import context
 
 from .registry import svcs_from, get_registry
@@ -7,10 +9,13 @@ from .registry import svcs_from, get_registry
 T = TypeVar("T")
 
 
-async def Depends(cls: type[T]) -> T:
+async def ADepends(cls: type[T]) -> T:
     request = context.request.get()
     container = svcs_from(request)
     return await container.aget(cls)
+
+
+Depends = async_to_sync(ADepends)
 
 
 class Service:
@@ -30,7 +35,7 @@ class Service:
                     continue  # Skip return type
 
                 # Auto-resolve dependencies
-                dependencies[param] = await Depends(param_type)
+                dependencies[param] = await ADepends(param_type)
 
             return cls(**dependencies)
 
