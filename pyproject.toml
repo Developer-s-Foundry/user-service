@@ -62,6 +62,7 @@ length-sort = true
 
 [tool.pyright]
 include = ["src"]
+exclude = ["**/migrations"]
 venvPath = "."
 venv = ".venv"
 
