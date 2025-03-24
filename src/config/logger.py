@@ -1,4 +1,4 @@
-from src.env import env, log
+from src.env import log
 
 LOGGING = {
     "version": 1,
@@ -6,9 +6,7 @@ LOGGING = {
     "loggers": {
         "df_wallet": {
             "level": log["level"],
-            "handlers": ["console", "combined_file", "error_file"]
-            if env.isProd
-            else ["console"],
+            "handlers": ["console", "combined_file", "error_file"],
         },
     },
     "formatters": {
@@ -24,13 +22,13 @@ LOGGING = {
         },
         "combined_file": {
             "class": "logging.handlers.TimedRotatingFileHandler",
-            "filename": "logs/combined/combined.log",
+            "filename": "combined.log",
             "when": "D",
             "formatter": "verbose",
         },
         "error_file": {
             "class": "logging.handlers.TimedRotatingFileHandler",
-            "filename": "logs/error/error.log",
+            "filename": "error.log",
             "when": "D",
             "formatter": "verbose",
             "level": "ERROR",
