@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from ninja.errors import HttpError
 
@@ -12,7 +13,9 @@ from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
 
 @Service()
 class UserController:
-    def __init__(self, logger: Logger, user_service: UserService) -> None:
+    def __init__(
+        self, logger: Annotated[Logger, "UserController"], user_service: UserService
+    ) -> None:
         self.logger = logger
         self.user_service = user_service
 
@@ -25,7 +28,13 @@ class UserController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "Get User Details",
+                    "message": str(exc),
+                    "metadata": {"user": {"id": id}},
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
     async def update_user(self, id: str, user_data: UpdateUserRequest) -> User:
@@ -38,7 +47,16 @@ class UserController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "Update User Details",
+                    "message": str(exc),
+                    "metadata": {
+                        "user": {"id": id},
+                        "new_data": user_data.model_dump(),
+                    },
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
     async def set_account_pin(self, id: str, user_pin: Pin) -> dict:
@@ -50,5 +68,11 @@ class UserController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "Set User Pin",
+                    "message": str(exc),
+                    "metadata": {"user": {"id": id, "pin": user_pin.pin}},
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")

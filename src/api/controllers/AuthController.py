@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from ninja.errors import HttpError
 
@@ -15,7 +16,9 @@ from src.api.models.payload.requests.AuthenticateUserRequest import (
 
 @Service()
 class AuthController:
-    def __init__(self, logger: Logger, auth_service: AuthService) -> None:
+    def __init__(
+        self, logger: Annotated[Logger, "AuthController"], auth_service: AuthService
+    ) -> None:
         self.logger = logger
         self.auth_service = auth_service
 
@@ -28,7 +31,13 @@ class AuthController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "User Registration",
+                    "message": str(exc),
+                    "metadata": user_data.model_dump(),
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
     async def validate_email(self, credentials: AuthenticateUserOtp) -> dict:
@@ -42,7 +51,13 @@ class AuthController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "Email Validation",
+                    "message": str(exc),
+                    "metadata": credentials.model_dump(),
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
     async def login(self, credentials: AuthenticateUserRequest) -> dict:
@@ -54,5 +69,11 @@ class AuthController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "User Login",
+                    "message": str(exc),
+                    "metadata": credentials.model_dump(),
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")

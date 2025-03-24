@@ -11,7 +11,7 @@ LOGGING = {
     },
     "formatters": {
         "verbose": {
-            "format": "{asctime} [{levelname}] {message}",
+            "format": "{asctime} [{levelname}] [{context}] {message} [Activity Type: {activity_type}] [Metadata: {metadata}]",
             "style": "{",
         },
     },

@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from src.utils.svcs import Service
 from src.utils.logger import Logger
 from src.api.typing.UserExists import UserExists
@@ -14,7 +16,9 @@ from .UtilityService import UtilityService
 
 @Service()
 class AuthService:
-    def __init__(self, logger: Logger, utility_service: UtilityService) -> None:
+    def __init__(
+        self, logger: Annotated[Logger, "AuthService"], utility_service: UtilityService
+    ) -> None:
         self.logger = logger
         self.utility_service = utility_service
 
@@ -25,7 +29,13 @@ class AuthService:
         existing_user = await UserRepository.find_by_email(email)
         if existing_user:
             message = "Email already registered"
-            self.logger.info(message, email=existing_user.email)  # type: ignore
+            self.logger.info(
+                {
+                    "activity_type": "User Registration",
+                    "message": message,
+                    "metadata": {"user": {"email": existing_user.email}},
+                }
+            )
             return {
                 "is_exists": True,
                 "user": existing_user,
@@ -44,7 +54,13 @@ class AuthService:
         user = self.utility_service.sanitize_user_object(created_user)
 
         message = "User registration successful"
-        self.logger.info(message, email=user.email)  # type: ignore
+        self.logger.info(
+            {
+                "activity_type": "User Registration",
+                "message": message,
+                "metadata": {"user": {"email": user.email}},
+            }
+        )
         return {
             "is_exists": False,
             "user": user,
@@ -57,10 +73,12 @@ class AuthService:
 
         user = await UserRepository.find_by_email(email)
         if not user:
-            self.logger.error(  # type: ignore
-                "Could not validate user as user does not exist",
-                email=email,
-                otp=otp,
+            self.logger.error(
+                {
+                    "activity_type": "Email Validation",
+                    "message": "Could not validate user as user does not exist",
+                    "metadata": {"email": email, "otp": otp},
+                }
             )
             return False
 
@@ -81,7 +99,13 @@ class AuthService:
         existing_user = await UserRepository.find_by_email(email)
         if not existing_user:
             message = "Invalid email or password"
-            self.logger.info(message)
+            self.logger.info(
+                {
+                    "activity_type": "User Login",
+                    "message": message,
+                    "metadata": req.model_dump(),
+                }
+            )
             return {"is_success": False, "message": message}
 
         is_password_check_ok = await self.utility_service.compare_hash(
@@ -89,13 +113,25 @@ class AuthService:
         )
         if not is_password_check_ok:
             message = "Invalid email or password"
-            self.logger.info(message, email=existing_user.email)  # type:ignore
+            self.logger.info(
+                {
+                    "activity_type": "User Login",
+                    "message": message,
+                    "metadata": req.model_dump(),
+                }
+            )
             return {"is_success": False, "message": message}
 
         if not existing_user.is_validated:
             # resend otp
             message = "User account not validated. Please check your email for further instructions"
-            self.logger.info(message, email=existing_user.email)  # type:ignore
+            self.logger.info(
+                {
+                    "activity_type": "User Login",
+                    "message": message,
+                    "metadata": req.model_dump(),
+                }
+            )
             return {
                 "is_success": False,
                 "message": message,
@@ -103,7 +139,13 @@ class AuthService:
 
         if not existing_user.is_active:
             message = "User account is inactive. Please contact support"
-            self.logger.info(message, email=existing_user.email)  # type:ignore
+            self.logger.info(
+                {
+                    "activity_type": "User Login",
+                    "message": message,
+                    "metadata": req.model_dump(),
+                }
+            )
             return {
                 "is_success": False,
                 "message": message,
@@ -111,7 +153,13 @@ class AuthService:
 
         if not existing_user.is_enabled:
             message = "User account is disabled. Please contact support"
-            self.logger.info(message, email=existing_user.email)  # type:ignore
+            self.logger.info(
+                {
+                    "activity_type": "User Login",
+                    "message": message,
+                    "metadata": req.model_dump(),
+                }
+            )
             return {
                 "is_success": False,
                 "message": message,
@@ -119,16 +167,34 @@ class AuthService:
 
         if existing_user.is_deleted:
             message = "User account has been deleted. Please contact support if you want to restore your account"
-            self.logger.info(message, email=existing_user.email)  # type:ignore
+            self.logger.info(
+                {
+                    "activity_type": "User Login",
+                    "message": message,
+                    "metadata": req.model_dump(),
+                }
+            )
             return {
                 "is_success": False,
                 "message": message,
             }
 
         user = self.utility_service.sanitize_user_object(existing_user)
-        self.logger.debug("User object was sanitized")  # type:ignore
+        self.logger.info(
+            {
+                "activity_type": "User Login",
+                "message": "User object was sanitized",
+                "metadata": {"email": email},
+            }
+        )
 
         jwt_details = self.utility_service.generate_jwt(user.email, user.id)
-        self.logger.debug("User JWT was generated")  # type:ignore
+        self.logger.info(
+            {
+                "activity_type": "User Login",
+                "message": "User JWT was generated",
+                "metadata": {"email": email},
+            }
+        )
 
         return {"is_success": True, "user": user, "token": jwt_details}

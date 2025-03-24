@@ -1,10 +1,14 @@
 from ninja import NinjaAPI
 from django.http import HttpRequest
 
-from src import __version__ as version
+from src.env import app
 from src.utils.svcs import Depends
 
-api: NinjaAPI = NinjaAPI(version=version)
+api: NinjaAPI = NinjaAPI(
+    version=app["version"],
+    title=app["display_name"],
+    description=app["description"],
+)
 
 
 @api.get("/")

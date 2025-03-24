@@ -1,67 +1,98 @@
-from typing import Any
+from typing import TypedDict
 
-from src import __name__, __version__
-from src.utils.env import get_env_variable
+from src import __name__, __version__, __description__, __display_name__
+from src.utils.env import get_env_int, get_env_str, get_env_list
 
 
 class Env:
     @property
     def isLocal(self) -> bool:
-        return get_env_variable("ENVIRONMENT") == "local"
+        return get_env_str("ENVIRONMENT") == "local"
 
     @property
     def isTest(self) -> bool:
-        return get_env_variable("ENVIRONMENT") == "test"
+        return get_env_str("ENVIRONMENT") == "test"
 
     @property
     def isProd(self) -> bool:
-        return get_env_variable("ENVIRONMENT") == "prod"
+        return get_env_str("ENVIRONMENT") == "prod"
+
+
+class App(TypedDict):
+    name: str
+    display_name: str
+    version: str
+    description: str
+    secret_key: str
+    debug: bool
+    allowed_hosts: list[str]
+
+
+class Log(TypedDict):
+    level: str
+
+
+class DB(TypedDict):
+    mongo: dict[str, str | int]
+    pg: dict[str, str | int]
+
+
+class Cache(TypedDict):
+    redis: dict[str, str | int]
+
+
+class JWT(TypedDict):
+    secret: str
+    issuer: str
 
 
 env = Env()
 
-app: dict[str, str | bool | dict[str, list]] = {
+app: App = {
     "name": __name__,
+    "display_name": __display_name__,
     "version": __version__,
-    "secret_key": get_env_variable("SECRET_KEY"),
+    "description": __description__,
+    "secret_key": get_env_str("SECRET_KEY"),
     "debug": True if (env.isLocal or env.isTest) else False,
-    "allowed_hosts": get_env_variable(
-        "ALLOWED_HOSTS", default="*", cast=lambda x: [v.strip() for v in x.split(",")]
-    ),
+    "allowed_hosts": get_env_list("ALLOWED_HOSTS", default="*"),
 }
 
-log: dict[str, Any] = {
-    "level": get_env_variable("LOG_LEVEL", default="debug", cast=lambda x: x.upper()),
+log: Log = {
+    "level": get_env_str("LOG_LEVEL", default="debug").upper(),
 }
 
-db: dict[str, dict[str, str | int]] = {
+db: DB = {
     "mongo": {
-        "host": get_env_variable("MONGODB_HOST"),
-        "port": get_env_variable("MONGODB_PORT", cast=int),
-        "user": get_env_variable("MONGODB_USERNAME"),
-        "pass": get_env_variable("MONGODB_PASSWORD"),
-        "database": get_env_variable("MONGODB_DATABASE"),
+        "host": get_env_str("MONGODB_HOST"),
+        "port": get_env_int("MONGODB_PORT"),
+        "user": get_env_str("MONGODB_USERNAME"),
+        "pass": get_env_str("MONGODB_PASSWORD"),
+        "database": get_env_str("MONGODB_DATABASE"),
     },
     "pg": {
-        "host": get_env_variable("PG_HOST"),
-        "port": get_env_variable("PG_PORT", cast=int),
-        "user": get_env_variable("PG_USERNAME"),
-        "pass": get_env_variable("PG_PASSWORD"),
-        "database": get_env_variable("PG_DATABASE"),
+        "host": get_env_str("PG_HOST"),
+        "port": get_env_int("PG_PORT"),
+        "user": get_env_str("PG_USERNAME"),
+        "pass": get_env_str("PG_PASSWORD"),
+        "database": get_env_str("PG_DATABASE"),
     },
 }
 
-cache: dict[str, dict[str, str | int]] = {
+cache: Cache = {
     "redis": {
-        "host": get_env_variable("REDIS_HOST"),
-        "port": get_env_variable("REDIS_PORT", cast=int),
-        "user": get_env_variable("REDIS_USERNAME"),
-        "pass": get_env_variable("REDIS_PASSWORD"),
+        "host": get_env_str("REDIS_HOST"),
+        "port": get_env_int("REDIS_PORT"),
+        "user": get_env_str("REDIS_USERNAME"),
+        "pass": get_env_str("REDIS_PASSWORD"),
     }
 }
 
 
-jwt_config: dict[str, Any] = {
-    "secret": get_env_variable("JWT_SECRET"),
-    "issuer": get_env_variable("JWT_ISSUER"),
+jwt_config: JWT = {
+    "secret": get_env_str("JWT_SECRET"),
+    "issuer": get_env_str("JWT_ISSUER"),
 }
+
+
+__all__ = ["app", "cache", "db", "env", "jwt_config", "log"]

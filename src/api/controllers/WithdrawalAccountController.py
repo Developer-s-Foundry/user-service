@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from ninja.errors import HttpError
 
@@ -14,7 +15,9 @@ from src.api.models.payload.requests.AddWithdrawalAccountRequest import (
 @Service()
 class WithdrawalAccountController:
     def __init__(
-        self, logger: Logger, withdraw_service: WithdrawalAccountService
+        self,
+        logger: Annotated[Logger, "WithdrawalAccountController"],
+        withdraw_service: WithdrawalAccountService,
     ) -> None:
         self.logger = logger
         self.withdraw_service = withdraw_service
@@ -32,7 +35,16 @@ class WithdrawalAccountController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "Add withdraw account",
+                    "message": str(exc),
+                    "metadata": {
+                        "user": {"id": user_id},
+                        "account_data": account_data.model_dump(),
+                    },
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
     async def list_withdrawal_accounts(
@@ -46,7 +58,13 @@ class WithdrawalAccountController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "List withdraw accounts",
+                    "message": str(exc),
+                    "metadata": {"user": {"id": user_id}},
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
     async def get_withdrawal_account(
@@ -62,7 +80,13 @@ class WithdrawalAccountController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "Get withdraw account",
+                    "message": str(exc),
+                    "metadata": {"user": {"id": user_id}, "accounta": {"id": id}},
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
     async def delete_withdrawal_account(self, user_id: str, id: int) -> dict:
@@ -78,5 +102,11 @@ class WithdrawalAccountController:
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
-            self.logger.error(str(exc))
+            self.logger.error(
+                {
+                    "activity_type": "Delete withdraw account",
+                    "message": str(exc),
+                    "metadata": {"user": {"id": user_id}, "accounta": {"id": id}},
+                }
+            )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")

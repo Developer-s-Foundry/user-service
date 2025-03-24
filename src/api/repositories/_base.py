@@ -1,6 +1,7 @@
 from typing import Generic, TypeVar
 
-from django.db.models import Model, BaseManager
+from django.db.models import Model
+from django.db.models.manager import BaseManager
 
 T = TypeVar("T", bound=Model)
 

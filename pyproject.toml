@@ -5,52 +5,53 @@ description = "Developers Foundry Wallet System"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "django-cors-headers>=4.7.0",
-    "django>=5.1.6",
-    "python-decouple>=3.8",
-    "pymongo>=4.11.1",
-    "django-mongodb-backend>=5.1.0b0",
-    "psycopg2-binary>=2.9.10",
-    "redis>=5.2.1",
-    "hiredis>=3.1.0",
-    "svcs>=25.1.0",
-    "bcrypt>=4.3.0",
-    "faker>=36.1.1",
-    "pydantic[email]>=2.10.6",
-    "django-ninja>=1.3.0",
-    "pyjwt>=2.10.1",
+  "django-cors-headers>=4.7.0",
+  "django>=5.1.6",
+  "python-decouple>=3.8",
+  "pymongo>=4.11.1",
+  "django-mongodb-backend>=5.1.0b0",
+  "psycopg2-binary>=2.9.10",
+  "redis>=5.2.1",
+  "hiredis>=3.1.0",
+  "svcs>=25.1.0",
+  "bcrypt>=4.3.0",
+  "faker>=36.1.1",
+  "pydantic[email]>=2.10.6",
+  "django-ninja>=1.3.0",
+  "pyjwt>=2.10.1",
 ]
 
 [dependency-groups]
 dev = [
-    "django-stubs>=5.1.3",
-    "django-types>=0.20.0",
-    "pre-commit>=4.1.0",
-    "pyright[nodejs]>=1.1.397",
-    "ruff>=0.9.6",
+  "django-stubs>=5.1.3",
+  "django-types>=0.20.0",
+  "pre-commit>=4.1.0",
+  "pyright[nodejs]>=1.1.397",
+  "ruff>=0.9.6",
 ]
+
+[tool.setuptools.dynamic]
+version = { attr = "src.__version__" }
 
 [tool.ruff]
 fix = true
 
 [tool.ruff.lint]
 extend-select = [
-  "UP",  # pyupgrade
-  "I",   # isort
-  "DJ",  # djangolint
-  "T20", # flake8-print
-  "ANN", # flake8-annotations
+  "UP",    # pyupgrade
+  "I",     # isort
+  "DJ",    # djangolint
+  "T20",   # flake8-print
+  "ANN",   # flake8-annotations
   "ASYNC", # flake8-async
-  "S", # flake8-bandit
-  "ICN", # flake8-import-convention
-  "RUF", # ruff
-  "ERA", # eradicate
-#   "D",   # pydocstyle
+  "S",     # flake8-bandit
+  "ICN",   # flake8-import-convention
+  "RUF",   # ruff
+  "ERA",   # eradicate
+  #   "D",   # pydocstyle
 ]
 
-ignore = [
-  "DJ001",
-]
+ignore = ["DJ001"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
