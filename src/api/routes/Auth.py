@@ -1,11 +1,16 @@
+from http import HTTPStatus
+
 from ninja import Router
 from django.http import HttpRequest
 
 from src.utils.svcs import ADepends
-from src.api.models.postgres import User as UserModel
 from src.api.controllers.AuthController import AuthController
 from src.api.models.payload.responses.User import UserResponse, UserLoginResponse
-from src.api.models.payload.responses.MessageResponse import MessageResponse
+from src.api.models.payload.responses.ErrorResponse import (
+    ErrorResponse,
+    ServerErrorResponse,
+)
+from src.api.models.payload.responses.SuccessResponse import SuccessResponse
 from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
 from src.api.models.payload.requests.AuthenticateUserOtp import AuthenticateUserOtp
 from src.api.models.payload.requests.AuthenticateUserRequest import (
@@ -15,13 +20,27 @@ from src.api.models.payload.requests.AuthenticateUserRequest import (
 router = Router()
 
 
-@router.post("/register", response=UserResponse)
-async def create_user(request: HttpRequest, user_data: CreateUserRequest) -> UserModel:
+@router.post(
+    "/register",
+    response={
+        HTTPStatus.CREATED: SuccessResponse[UserResponse],
+        HTTPStatus.BAD_REQUEST: ErrorResponse,
+        HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
+    },
+)
+async def create_user(request: HttpRequest, user_data: CreateUserRequest) -> dict:
     auth_controller = await ADepends(AuthController)
     return await auth_controller.register(user_data)
 
 
-@router.put("/email/verification", response=MessageResponse)
+@router.put(
+    "/email/verification",
+    response={
+        HTTPStatus.OK: SuccessResponse,
+        HTTPStatus.BAD_REQUEST: ErrorResponse,
+        HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
+    },
+)
 async def validate_email(
     request: HttpRequest, credentials: AuthenticateUserOtp
 ) -> dict:
@@ -29,7 +48,14 @@ async def validate_email(
     return await auth_controller.validate_email(credentials)
 
 
-@router.post("/login", response=UserLoginResponse)
+@router.post(
+    "/login",
+    response={
+        HTTPStatus.OK: SuccessResponse[UserLoginResponse],
+        HTTPStatus.BAD_REQUEST: ErrorResponse,
+        HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
+    },
+)
 async def login(request: HttpRequest, credentials: AuthenticateUserRequest) -> dict:
     auth_controller = await ADepends(AuthController)
     return await auth_controller.login(credentials)

@@ -1,13 +1,10 @@
-from http import HTTPStatus
 from typing import Annotated
 
 import jwt
-from django.http import HttpRequest, HttpResponse
-from ninja.errors import AuthenticationError
+from django.http import HttpRequest
 from ninja.security import HttpBearer
 
 from src.env import jwt_config
-from src.api.routes import api
 from src.utils.svcs import Service
 from src.utils.logger import Logger
 
@@ -37,18 +34,3 @@ class Authentication(HttpBearer):
         setattr(request, "auth_email", jwt_data["email"])
         setattr(request, "auth_id", jwt_data["user_id"])
         return token
-
-
-@api.exception_handler(jwt.exceptions.InvalidTokenError)
-@api.exception_handler(AuthenticationError)
-def on_invalid_token(request: HttpRequest, exc: Exception) -> HttpResponse:
-    Logger().debug(
-        {
-            "activity_type": "Exception handler",
-            "message": "Unauthorised access",
-            "metadata": {"exception": exc.__class__, "msg": str(exc)},
-        }
-    )
-    return api.create_response(
-        request, {"detail": "Unauthorized Access"}, status=HTTPStatus.UNAUTHORIZED
-    )

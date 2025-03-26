@@ -4,6 +4,7 @@ from src.utils.svcs import Service
 from src.utils.logger import Logger
 from src.api.typing.UserExists import UserExists
 from src.api.typing.UserSuccess import UserSuccess
+from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
 from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
 from src.api.models.payload.requests.AuthenticateUserOtp import AuthenticateUserOtp
@@ -31,7 +32,7 @@ class AuthService:
             message = "Email already registered"
             self.logger.info(
                 {
-                    "activity_type": "User Registration",
+                    "activity_type": ACTIVITY_TYPES["USER_REGISTRATION"],
                     "message": message,
                     "metadata": {"user": {"email": existing_user.email}},
                 }
@@ -56,7 +57,7 @@ class AuthService:
         message = "User registration successful"
         self.logger.info(
             {
-                "activity_type": "User Registration",
+                "activity_type": ACTIVITY_TYPES["USER_REGISTRATION"],
                 "message": message,
                 "metadata": {"user": {"email": user.email}},
             }
@@ -75,7 +76,7 @@ class AuthService:
         if not user:
             self.logger.error(
                 {
-                    "activity_type": "Email Validation",
+                    "activity_type": ACTIVITY_TYPES["EMAIL_VALIDATION"],
                     "message": "Could not validate user as user does not exist",
                     "metadata": {"email": email, "otp": otp},
                 }
@@ -101,7 +102,7 @@ class AuthService:
             message = "Invalid email or password"
             self.logger.info(
                 {
-                    "activity_type": "User Login",
+                    "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
                     "message": message,
                     "metadata": req.model_dump(),
                 }
@@ -115,7 +116,7 @@ class AuthService:
             message = "Invalid email or password"
             self.logger.info(
                 {
-                    "activity_type": "User Login",
+                    "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
                     "message": message,
                     "metadata": req.model_dump(),
                 }
@@ -127,7 +128,7 @@ class AuthService:
             message = "User account not validated. Please check your email for further instructions"
             self.logger.info(
                 {
-                    "activity_type": "User Login",
+                    "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
                     "message": message,
                     "metadata": req.model_dump(),
                 }
@@ -141,7 +142,7 @@ class AuthService:
             message = "User account is inactive. Please contact support"
             self.logger.info(
                 {
-                    "activity_type": "User Login",
+                    "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
                     "message": message,
                     "metadata": req.model_dump(),
                 }
@@ -155,7 +156,7 @@ class AuthService:
             message = "User account is disabled. Please contact support"
             self.logger.info(
                 {
-                    "activity_type": "User Login",
+                    "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
                     "message": message,
                     "metadata": req.model_dump(),
                 }
@@ -169,7 +170,7 @@ class AuthService:
             message = "User account has been deleted. Please contact support if you want to restore your account"
             self.logger.info(
                 {
-                    "activity_type": "User Login",
+                    "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
                     "message": message,
                     "metadata": req.model_dump(),
                 }
@@ -182,7 +183,7 @@ class AuthService:
         user = self.utility_service.sanitize_user_object(existing_user)
         self.logger.info(
             {
-                "activity_type": "User Login",
+                "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
                 "message": "User object was sanitized",
                 "metadata": {"email": email},
             }
@@ -191,7 +192,7 @@ class AuthService:
         jwt_details = self.utility_service.generate_jwt(user.email, user.id)
         self.logger.info(
             {
-                "activity_type": "User Login",
+                "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
                 "message": "User JWT was generated",
                 "metadata": {"email": email},
             }

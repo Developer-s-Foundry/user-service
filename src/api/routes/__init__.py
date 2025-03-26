@@ -3,6 +3,7 @@ from django.http import HttpRequest
 
 from src.env import app
 from src.utils.svcs import Depends
+from src.api.middlewares.AppMiddleware import Authentication
 
 api: NinjaAPI = NinjaAPI(
     version=app["version"],
@@ -16,8 +17,6 @@ def home(request: HttpRequest) -> dict:
     return {"message": "Hello, World!"}
 
 
-from src.api.middlewares.AppMiddleware import Authentication  # noqa: E402
-
 authentication = Depends(Authentication)
 
 api.add_router("/auth", "src.api.routes.Auth.router", tags=["Auth"])
@@ -29,4 +28,7 @@ api.add_router(
     "src.api.routes.WithdrawalAccount.router",
     auth=authentication,
     tags=["User"],
+)
+api.add_router(
+    "/password/reset", "src.api.routes.PasswordReset.router", tags=["Password"]
 )

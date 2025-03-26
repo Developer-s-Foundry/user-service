@@ -5,6 +5,7 @@ from src.utils.logger import Logger
 from src.api.models.postgres import User, Wallet
 from src.api.typing.UserWallet import UserWallet
 from src.api.typing.UserSuccess import UserSuccess
+from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
 from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
 from src.api.models.payload.requests.CreateWalletRequest import CreateWalletRequest
@@ -31,7 +32,7 @@ class UserService:
         if user:
             self.logger.info(
                 {
-                    "activity_type": "Get User Details",
+                    "activity_type": ACTIVITY_TYPES["FETCH_USER"],
                     "message": "User fetched succesfully",
                     "metadata": {"user": {"id": user.id, "email": user.email}},
                 }
@@ -51,7 +52,7 @@ class UserService:
         if not existing_user:
             self.logger.warn(
                 {
-                    "activity_type": "Set User Pin",
+                    "activity_type": ACTIVITY_TYPES["SET_PIN"],
                     "message": "User does not exist",
                     "metadata": {"user": {"id": id}},
                 }
@@ -60,7 +61,7 @@ class UserService:
         if existing_user.pin:
             self.logger.info(
                 {
-                    "activity_type": "Set User Pin",
+                    "activity_type": ACTIVITY_TYPES["SET_PIN"],
                     "message": "User already has a pin",
                     "metadata": {
                         "user": {"id": existing_user.id, "email": existing_user.email}
@@ -74,7 +75,7 @@ class UserService:
         await UserRepository.update_by_user(existing_user, {"pin": pin})
         self.logger.info(
             {
-                "activity_type": "Set User Pin",
+                "activity_type": ACTIVITY_TYPES["SET_PIN"],
                 "message": "User PIN set successfully",
                 "metadata": {
                     "user": {"id": existing_user.id, "email": existing_user.email}
@@ -90,7 +91,7 @@ class UserService:
         if not existing_user:
             self.logger.warn(
                 {
-                    "activity_type": "Update User Details",
+                    "activity_type": ACTIVITY_TYPES["UPDATE_USER"],
                     "message": "User fetch failed",
                     "metadata": {"user": {"id": id}},
                 }
@@ -103,7 +104,7 @@ class UserService:
 
         self.logger.info(
             {
-                "activity_type": "Update User Details",
+                "activity_type": ACTIVITY_TYPES["UPDATE_USER"],
                 "message": "User updated successfully",
                 "metadata": {
                     "user": {"id": id},

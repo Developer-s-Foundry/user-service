@@ -1,3 +1,4 @@
+from uuid import uuid4
 from datetime import timedelta
 
 import jwt
@@ -8,6 +9,7 @@ from django.utils import timezone
 from src.env import jwt_config
 from src.utils.svcs import Service
 from src.api.models.postgres import User
+from src.api.typing.ExpireUUID import ExpireUUID
 from src.api.enums.CharacterCasing import CharacterCasing
 
 DEFAULT_CHARACTER_LENGTH = 12
@@ -73,3 +75,10 @@ class UtilityService:
             "aud": email,
         }
         return jwt.encode(dict(jwt_data, **jwt_claims), jwt_config["secret"])
+
+    @staticmethod
+    def generate_uuid() -> ExpireUUID:
+        current_time = timezone.now()
+        lifespan = timedelta(hours=24)
+        expires_at = current_time + lifespan
+        return {"uuid": uuid4(), "expires_at": expires_at}

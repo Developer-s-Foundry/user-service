@@ -21,10 +21,12 @@ class User(PostgresBaseModel):
     state_lga: models.ForeignKey = models.ForeignKey(
         StateLGA, on_delete=models.SET_NULL, null=True
     )
-    profile_picture: models.CharField = models.CharField(max_length=255, null=True)
+    profile_picture: models.CharField = models.CharField(max_length=255)
     tier: models.IntegerField = models.IntegerField(default=1)
-    pin: models.CharField = models.CharField(max_length=10, null=True)
-    otp: models.CharField = models.CharField(max_length=10, null=True)
+    pin: models.CharField = models.CharField(max_length=10)
+    otp: models.CharField = models.CharField(max_length=10)
+    password_reset_token: models.CharField = models.CharField(max_length=255)
+    token_expires_at: models.DateTimeField = models.DateTimeField(null=True)
     is_validated: models.BooleanField = models.BooleanField(default=False)
     is_active: models.BooleanField = models.BooleanField(default=False)
     is_enabled: models.BooleanField = models.BooleanField(default=False)

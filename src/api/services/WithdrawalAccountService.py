@@ -4,6 +4,7 @@ from src.utils.svcs import Service
 from src.utils.logger import Logger
 from src.api.models.postgres import UserWithdrawalInformation
 from src.api.typing.AccountSuccess import AccountSuccess
+from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
 from src.api.repositories.UserWithdrawalInformationRepository import (
     UserWithdrawalInformationRepository,
@@ -28,7 +29,7 @@ class WithdrawalAccountService:
             message = "User does not exists"
             self.logger.warn(
                 {
-                    "activity_type": "Add withdraw account",
+                    "activity_type": ACTIVITY_TYPES["ADD_WITHDRAW_ACCOUNT"],
                     "message": message,
                     "metadata": {"user": {"id": user_id}},
                 }
@@ -43,7 +44,7 @@ class WithdrawalAccountService:
             message = f"You already have an account with the account number {req.account_number}!"
             self.logger.info(
                 {
-                    "activity_type": "Add withdraw account",
+                    "activity_type": ACTIVITY_TYPES["ADD_WITHDRAW_ACCOUNT"],
                     "message": message,
                     "metadata": {"user": {"id": user_id}, "account": req.model_dump()},
                 }
@@ -60,7 +61,7 @@ class WithdrawalAccountService:
         message = "Withdrawal account details saved succesfully"
         self.logger.info(
             {
-                "activity_type": "Add withdraw account",
+                "activity_type": ACTIVITY_TYPES["ADD_WITHDRAW_ACCOUNT"],
                 "message": message,
                 "metadata": {"user": {"id": user_id}, "account": req.model_dump()},
             }
@@ -108,7 +109,7 @@ class WithdrawalAccountService:
             message = "Account not found!"
             self.logger.info(
                 {
-                    "activity_type": "Get withdraw account",
+                    "activity_type": ACTIVITY_TYPES["FETCH_WITHDRAW_ACCOUNT"],
                     "message": message,
                     "metadata": {
                         "user": {"id": user_id},
@@ -122,7 +123,7 @@ class WithdrawalAccountService:
             message = "Unauthorized request!"
             self.logger.warn(
                 {
-                    "activity_type": "Get withdraw account",
+                    "activity_type": ACTIVITY_TYPES["FETCH_WITHDRAW_ACCOUNT"],
                     "message": message,
                     "metadata": {
                         "user": {"id": user_id},
@@ -134,7 +135,7 @@ class WithdrawalAccountService:
 
         self.logger.info(
             {
-                "activity_type": "Get withdraw account",
+                "activity_type": ACTIVITY_TYPES["FETCH_WITHDRAW_ACCOUNT"],
                 "message": "User Account fetched successfully",
                 "metadata": {
                     "user": {"id": user_id},
@@ -150,7 +151,7 @@ class WithdrawalAccountService:
         withdrawal_accounts = await UserWithdrawalInformationRepository.list(user_id)
         self.logger.info(
             {
-                "activity_type": "List withdraw accounts",
+                "activity_type": ACTIVITY_TYPES["LIST_WITHDRAW_ACCOUNTS"],
                 "message": "User Accounts fetched successfully",
                 "metadata": {"user": {"id": user_id}},
             }
@@ -165,7 +166,7 @@ class WithdrawalAccountService:
             message = "Account not found!"
             self.logger.info(
                 {
-                    "activity_type": "Delete withdraw account",
+                    "activity_type": ACTIVITY_TYPES["DELETE_WITHDRAW_ACCOUNT"],
                     "message": message,
                     "metadata": {
                         "user": {"id": user_id},
@@ -179,7 +180,7 @@ class WithdrawalAccountService:
             message = "Unauthorized request!"
             self.logger.warn(
                 {
-                    "activity_type": "Delete withdraw account",
+                    "activity_type": ACTIVITY_TYPES["DELETE_WITHDRAW_ACCOUNT"],
                     "message": message,
                     "metadata": {
                         "user": {"id": user_id},
@@ -197,7 +198,7 @@ class WithdrawalAccountService:
         message = "Withdrawal account successfully deleted!"
         self.logger.info(
             {
-                "activity_type": "Delete withdraw account",
+                "activity_type": ACTIVITY_TYPES["DELETE_WITHDRAW_ACCOUNT"],
                 "message": message,
                 "metadata": {
                     "user": {"id": user_id},
