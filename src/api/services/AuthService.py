@@ -3,6 +3,7 @@ from typing import Annotated
 from src.utils.svcs import Service
 from src.utils.logger import Logger
 from src.api.typing.UserExists import UserExists
+from src.api.constants.messages import MESSAGES
 from src.api.typing.UserSuccess import UserSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
@@ -29,7 +30,7 @@ class AuthService:
 
         existing_user = await UserRepository.find_by_email(email)
         if existing_user:
-            message = "Email already registered"
+            message = MESSAGES["REGISTRATION"]["EMAIL_EXISTS"]
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["USER_REGISTRATION"],
@@ -53,7 +54,7 @@ class AuthService:
 
         user = self.utility_service.sanitize_user_object(created_user)
 
-        message = "User registration successful"
+        message = MESSAGES["REGISTRATION"]["USER_REGISTERED"]
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["USER_REGISTRATION"],
@@ -76,7 +77,7 @@ class AuthService:
             self.logger.error(
                 {
                     "activity_type": ACTIVITY_TYPES["EMAIL_VALIDATION"],
-                    "message": "Could not validate user as user does not exist",
+                    "message": MESSAGES["USER"]["DOESNT_EXIST"],
                     "metadata": {"email": email, "otp": otp},
                 }
             )
@@ -98,7 +99,7 @@ class AuthService:
 
         existing_user = await UserRepository.find_by_email(email)
         if not existing_user:
-            message = "Invalid email or password"
+            message = MESSAGES["AUTH"]["INVALID_CRED"]
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
@@ -112,7 +113,7 @@ class AuthService:
             password, existing_user.password
         )
         if not is_password_check_ok:
-            message = "Invalid email or password"
+            message = MESSAGES["AUTH"]["INVALID_CRED"]
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
@@ -124,7 +125,7 @@ class AuthService:
 
         if not existing_user.is_validated:
             # resend otp
-            message = "User account not validated. Please check your email for further instructions"
+            message = MESSAGES["AUTH"]["NOT_VALIDATED"]
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
@@ -138,7 +139,7 @@ class AuthService:
             }
 
         if not existing_user.is_active:
-            message = "User account is inactive. Please contact support"
+            message = MESSAGES["AUTH"]["NOT_ACTIVE"]
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
@@ -152,7 +153,7 @@ class AuthService:
             }
 
         if not existing_user.is_enabled:
-            message = "User account is disabled. Please contact support"
+            message = MESSAGES["AUTH"]["NOT_ENABLED"]
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
@@ -166,7 +167,7 @@ class AuthService:
             }
 
         if existing_user.is_deleted:
-            message = "User account has been deleted. Please contact support if you want to restore your account"
+            message = MESSAGES["AUTH"]["IS_DELETED"]
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
@@ -183,7 +184,7 @@ class AuthService:
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
-                "message": "User object was sanitized",
+                "message": MESSAGES["USER"]["SANITIZED"],
                 "metadata": {"email": email},
             }
         )
@@ -192,7 +193,7 @@ class AuthService:
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["USER_LOGIN"],
-                "message": "User JWT was generated",
+                "message": MESSAGES["COMMON"]["JWT_GENERATED"],
                 "metadata": {"email": email},
             }
         )

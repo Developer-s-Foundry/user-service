@@ -3,6 +3,7 @@ from typing import Annotated
 from src.utils.svcs import Service
 from src.utils.logger import Logger
 from src.api.models.postgres import User
+from src.api.constants.messages import MESSAGES, DYNAMIC_MESSSAGES
 from src.api.typing.UserSuccess import UserSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
@@ -28,15 +29,15 @@ class UserService:
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["FETCH_USER"],
-                    "message": "User fetched succesfully",
+                    "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_SUCCESS"]("User"),
                     "metadata": {"user": {"id": user.id, "email": user.email}},
                 }
             )
         else:
             self.logger.warn(
                 {
-                    "activity_type": "Get User Details",
-                    "message": "User fetch failed",
+                    "activity_type": ACTIVITY_TYPES["FETCH_USER"],
+                    "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_FAILED"]("User"),
                     "metadata": {"user": {"id": id}},
                 }
             )
@@ -48,7 +49,7 @@ class UserService:
             self.logger.warn(
                 {
                     "activity_type": ACTIVITY_TYPES["SET_PIN"],
-                    "message": "User does not exist",
+                    "message": MESSAGES["USER"]["DOESNT_EXIST"],
                     "metadata": {"user": {"id": id}},
                 }
             )
@@ -57,7 +58,7 @@ class UserService:
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["SET_PIN"],
-                    "message": "User already has a pin",
+                    "message": MESSAGES["USER"]["PIN_EXISTS"],
                     "metadata": {
                         "user": {"id": existing_user.id, "email": existing_user.email}
                     },
@@ -65,19 +66,22 @@ class UserService:
             )
             return {
                 "is_success": False,
-                "message": "You already have a transaction PIN on your account!",
+                "message": MESSAGES["USER"]["PIN_EXISTS"],
             }
         await UserRepository.update_by_user(existing_user, {"pin": pin})
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["SET_PIN"],
-                "message": "User PIN set successfully",
+                "message": MESSAGES["USER"]["PIN_SET"],
                 "metadata": {
                     "user": {"id": existing_user.id, "email": existing_user.email}
                 },
             }
         )
-        return {"is_success": True, "message": "Transaction PIN created!"}
+        return {
+            "is_success": True,
+            "message": MESSAGES["USER"]["PIN_SET"],
+        }
 
     async def update(self, req: UpdateUserRequest) -> UserSuccess:
         id = req._id
@@ -87,11 +91,11 @@ class UserService:
             self.logger.warn(
                 {
                     "activity_type": ACTIVITY_TYPES["UPDATE_USER"],
-                    "message": "User fetch failed",
+                    "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_FAILED"]("User"),
                     "metadata": {"user": {"id": id}},
                 }
             )
-            return {"is_success": False, "message": "User doesn't exist!"}
+            return {"is_success": False, "message": MESSAGES["USER"]["DOESNT_EXIST"]}
 
         updated_user = await UserRepository.update_by_id(
             id, req.model_dump(exclude_unset=True)
@@ -100,7 +104,7 @@ class UserService:
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["UPDATE_USER"],
-                "message": "User updated successfully",
+                "message": MESSAGES["USER"]["UPDATED"],
                 "metadata": {
                     "user": {"id": id},
                     "new_data": req.model_dump(exclude_unset=True),

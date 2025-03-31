@@ -62,7 +62,6 @@ class UtilityService:
         if user:
             del user.password
             del user.pin
-            del user.otp
 
             return user
 

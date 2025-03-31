@@ -11,6 +11,8 @@ api: NinjaAPI = NinjaAPI(
     description=app["description"],
 )
 
+from src.api.utils import error_handlers  # noqa: E402, F401
+
 
 @api.get("/")
 def home(request: HttpRequest) -> dict:

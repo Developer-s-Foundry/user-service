@@ -3,6 +3,7 @@ from typing import Annotated
 from src.utils.svcs import Service
 from src.utils.logger import Logger
 from src.api.models.postgres import UserWithdrawalInformation
+from src.api.constants.messages import MESSAGES, DYNAMIC_MESSSAGES
 from src.api.typing.AccountSuccess import AccountSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
@@ -26,7 +27,7 @@ class WithdrawalAccountService:
     ) -> AccountSuccess:
         user = await UserRepository.find_by_id(user_id)
         if not user:
-            message = "User does not exists"
+            message = MESSAGES["USER"]["DOESNT_EXIST"]
             self.logger.warn(
                 {
                     "activity_type": ACTIVITY_TYPES["ADD_WITHDRAW_ACCOUNT"],
@@ -41,7 +42,7 @@ class WithdrawalAccountService:
             )
         )
         if account_already_exists:
-            message = f"You already have an account with the account number {req.account_number}!"
+            message = DYNAMIC_MESSSAGES["ACCOUNT"]["EXISTS"](req.account_number)
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["ADD_WITHDRAW_ACCOUNT"],
@@ -58,7 +59,7 @@ class WithdrawalAccountService:
             user, req
         )
 
-        message = "Withdrawal account details saved succesfully"
+        message = MESSAGES["ACCOUNT"]["SAVED"]
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["ADD_WITHDRAW_ACCOUNT"],
@@ -80,10 +81,10 @@ class WithdrawalAccountService:
     ) -> None:
         user = await UserRepository.find_by_id(user_id)
         if not user:
-            message = "User does not exists"
+            message = MESSAGES["USER"]["DOESNT_EXIST"]
             self.logger.warn(
                 {
-                    "activity_type": "Update withdraw account",
+                    "activity_type": ACTIVITY_TYPES["UPDATE_WITHDRAW_ACCOUNT"],
                     "message": message,
                     "metadata": {"user": {"id": user_id}},
                 }
@@ -94,8 +95,8 @@ class WithdrawalAccountService:
         )
         self.logger.info(
             {
-                "activity_type": "Update withdraw account",
-                "message": "User Withdraw account updated successfully",
+                "activity_type": ACTIVITY_TYPES["UPDATE_WITHDRAW_ACCOUNT"],
+                "message": MESSAGES["ACCOUNT"]["UPDATED"],
                 "metadata": {
                     "user": {"id": user_id},
                     "account": dict(id=id, **req.model_dump()),
@@ -106,7 +107,7 @@ class WithdrawalAccountService:
     async def get_withdrawal_account(self, user_id: str, id: int) -> AccountSuccess:
         withdrawal_account = await UserWithdrawalInformationRepository.find_by_id(id)
         if not withdrawal_account:
-            message = "Account not found!"
+            message = DYNAMIC_MESSSAGES["COMMON"]["NOT_FOUND"]("Account")
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["FETCH_WITHDRAW_ACCOUNT"],
@@ -120,7 +121,7 @@ class WithdrawalAccountService:
             return {"is_success": False, "message": message}
 
         if withdrawal_account.user.id != user_id:
-            message = "Unauthorized request!"
+            message = MESSAGES["USER"]["NOT_ALLOWED"]
             self.logger.warn(
                 {
                     "activity_type": ACTIVITY_TYPES["FETCH_WITHDRAW_ACCOUNT"],
@@ -136,7 +137,9 @@ class WithdrawalAccountService:
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["FETCH_WITHDRAW_ACCOUNT"],
-                "message": "User Account fetched successfully",
+                "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_SUCCESS"](
+                    "User Account"
+                ),
                 "metadata": {
                     "user": {"id": user_id},
                     "account": {"id": id},
@@ -152,7 +155,9 @@ class WithdrawalAccountService:
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["LIST_WITHDRAW_ACCOUNTS"],
-                "message": "User Accounts fetched successfully",
+                "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_SUCCESS"](
+                    "User Accounts"
+                ),
                 "metadata": {"user": {"id": user_id}},
             }
         )
@@ -163,7 +168,7 @@ class WithdrawalAccountService:
             id
         )
         if not account_already_exists:
-            message = "Account not found!"
+            message = DYNAMIC_MESSSAGES["COMMON"]["NOT_FOUND"]("Account")
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["DELETE_WITHDRAW_ACCOUNT"],
@@ -177,7 +182,7 @@ class WithdrawalAccountService:
             return {"is_success": False, "message": message}
 
         if account_already_exists.user.id != user_id:
-            message = "Unauthorized request!"
+            message = MESSAGES["USER"]["NOT_ALLOWED"]
             self.logger.warn(
                 {
                     "activity_type": ACTIVITY_TYPES["DELETE_WITHDRAW_ACCOUNT"],
@@ -195,7 +200,7 @@ class WithdrawalAccountService:
 
         await UserWithdrawalInformationRepository.delete_user_withdrawal_account(id)
 
-        message = "Withdrawal account successfully deleted!"
+        message = DYNAMIC_MESSSAGES["COMMON"]["DELETED"]("Withdrawal account")
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["DELETE_WITHDRAW_ACCOUNT"],

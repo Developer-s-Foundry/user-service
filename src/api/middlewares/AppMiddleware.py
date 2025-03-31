@@ -12,6 +12,7 @@ from src.utils.logger import Logger
 @Service()
 class Authentication(HttpBearer):
     def __init__(self, logger: Annotated[Logger, "Authentication"]) -> None:
+        super().__init__()
         self.logger = logger
 
     def authenticate(self, request: HttpRequest, token: str) -> str:
