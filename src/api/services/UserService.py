@@ -53,7 +53,7 @@ class UserService:
                     "metadata": {"user": {"id": id}},
                 }
             )
-            return {"is_success": False, "message": "User doesn't exist!"}
+            return {"is_success": False, "message": MESSAGES["USER"]["DOESNT_EXIST"]}
         if existing_user.pin:
             self.logger.info(
                 {
