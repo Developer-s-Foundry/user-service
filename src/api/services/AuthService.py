@@ -48,7 +48,6 @@ class AuthService:
 
         created_user = await UserRepository.add(req)
         otp = self.utility_service.generate_random_string(length=6, numeric_only=True)
-        await UserRepository.update_by_user(created_user, {"otp": otp})
 
         otp  # Send OTP to user
 
