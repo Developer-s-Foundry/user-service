@@ -30,7 +30,7 @@ router = Router()
 )
 async def add_withdrawal_account(
     request: HttpRequest, account_data: AddWithdrawalAccountRequest
-) -> dict:
+) -> tuple:
     user_id = getattr(request, "auth_id", "")
     withdraw_controller = await ADepends(WithdrawalAccountController)
     return await withdraw_controller.add_withdrawal_account(user_id, account_data)
@@ -45,7 +45,7 @@ async def add_withdrawal_account(
 )
 async def list_withdrawal_accounts(
     request: HttpRequest,
-) -> dict:
+) -> tuple:
     user_id = getattr(request, "auth_id", "")
     withdraw_controller = await ADepends(WithdrawalAccountController)
     return await withdraw_controller.list_withdrawal_accounts(user_id)
@@ -59,7 +59,7 @@ async def list_withdrawal_accounts(
         HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
     },
 )
-async def get_withdrawal_account(request: HttpRequest, id: int) -> dict:
+async def get_withdrawal_account(request: HttpRequest, id: int) -> tuple:
     user_id = getattr(request, "auth_id", "")
     withdraw_controller = await ADepends(WithdrawalAccountController)
     return await withdraw_controller.get_withdrawal_account(user_id, id)
@@ -73,7 +73,7 @@ async def get_withdrawal_account(request: HttpRequest, id: int) -> dict:
         HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
     },
 )
-async def delete_withdrawal_account(request: HttpRequest, id: int) -> dict:
+async def delete_withdrawal_account(request: HttpRequest, id: int) -> tuple:
     user_id = getattr(request, "auth_id", "")
     withdraw_controller = await ADepends(WithdrawalAccountController)
     return await withdraw_controller.delete_withdrawal_account(user_id, id)

@@ -1,3 +1,4 @@
+from .Otp import Otp
 from .Bank import Bank
 from .User import User
 from .StateLGA import StateLGA
@@ -7,6 +8,7 @@ from .UserWithdrawalInformation import UserWithdrawalInformation
 
 __all__ = [
     "Bank",
+    "Otp",
     "StateLGA",
     "User",
     "UserKYCInformation",

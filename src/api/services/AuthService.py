@@ -7,21 +7,27 @@ from src.api.constants.messages import MESSAGES
 from src.api.typing.UserSuccess import UserSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
+from src.api.models.payload.requests.ResendUserOtp import ResendUserOtp
 from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
 from src.api.models.payload.requests.AuthenticateUserOtp import AuthenticateUserOtp
 from src.api.models.payload.requests.AuthenticateUserRequest import (
     AuthenticateUserRequest,
 )
 
+from .OtpService import OtpService
 from .UtilityService import UtilityService
 
 
 @Service()
 class AuthService:
     def __init__(
-        self, logger: Annotated[Logger, "AuthService"], utility_service: UtilityService
+        self,
+        logger: Annotated[Logger, "AuthService"],
+        otp_service: OtpService,
+        utility_service: UtilityService,
     ) -> None:
         self.logger = logger
+        self.otp_service = otp_service
         self.utility_service = utility_service
 
     async def register(self, req: CreateUserRequest) -> UserExists:
@@ -48,9 +54,8 @@ class AuthService:
         req = req.model_copy(update={"password": hashed_password})
 
         created_user = await UserRepository.add(req)
-        otp = self.utility_service.generate_random_string(length=6, numeric_only=True)
 
-        otp  # Send OTP to user
+        await self.otp_service.send_otp(created_user.id)
 
         user = self.utility_service.sanitize_user_object(created_user)
 
@@ -68,6 +73,26 @@ class AuthService:
             "message": message,
         }
 
+    async def resend_email(self, req: ResendUserOtp) -> UserSuccess:
+        email = req.email
+
+        user = await UserRepository.find_by_email(email)
+        if not user:
+            self.logger.error(
+                {
+                    "activity_type": ACTIVITY_TYPES["RESEND_EMAIL"],
+                    "message": MESSAGES["USER"]["DOESNT_EXIST"],
+                    "metadata": {"email": email},
+                }
+            )
+            return {"is_success": False, "message": MESSAGES["USER"]["DOESNT_EXIST"]}
+
+        otp_success = await self.otp_service.send_otp(user.id)
+        return {
+            "is_success": otp_success["is_success"],
+            "message": otp_success["message"],
+        }
+
     async def validate_email(self, req: AuthenticateUserOtp) -> bool:
         email = req.email
         otp = req.otp
@@ -83,14 +108,13 @@ class AuthService:
             )
             return False
 
-        # check otp storage to validate sent otp
-        email
-        otp
+        is_valid = await self.otp_service.validate_otp(user.id, otp)
+        if not is_valid:
+            return False
 
         await UserRepository.update_by_user(
             user, {"is_active": True, "is_enabled": True, "is_validated": True}
         )
-
         return True
 
     async def login(self, req: AuthenticateUserRequest) -> UserSuccess:
@@ -124,7 +148,8 @@ class AuthService:
             return {"is_success": False, "message": message}
 
         if not existing_user.is_validated:
-            # resend otp
+            await self.otp_service.send_otp(existing_user.id)
+
             message = MESSAGES["AUTH"]["NOT_VALIDATED"]
             self.logger.info(
                 {
@@ -198,4 +223,9 @@ class AuthService:
             }
         )
 
-        return {"is_success": True, "user": user, "token": jwt_details}
+        return {
+            "is_success": True,
+            "message": MESSAGES["AUTH"]["SUCCESS"],
+            "user": user,
+            "token": jwt_details,
+        }

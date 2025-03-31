@@ -46,6 +46,10 @@ class JWT(TypedDict):
     issuer: str
 
 
+class OTP(TypedDict):
+    lifetime: int
+
+
 env = Env()
 
 app: App = {
@@ -94,5 +98,6 @@ jwt_config: JWT = {
     "issuer": get_env_str("JWT_ISSUER"),
 }
 
+otp: OTP = {"lifetime": get_env_int("OTP_LIFETIME")}
 
-__all__ = ["app", "cache", "db", "env", "jwt_config", "log"]
+__all__ = ["app", "cache", "db", "env", "jwt_config", "log", "otp"]

@@ -6,6 +6,7 @@ from django.http import HttpRequest
 from src.utils.svcs import ADepends
 from src.api.controllers.AuthController import AuthController
 from src.api.models.payload.responses.User import UserResponse, UserLoginResponse
+from src.api.models.payload.requests.ResendUserOtp import ResendUserOtp
 from src.api.models.payload.responses.ErrorResponse import (
     ErrorResponse,
     ServerErrorResponse,
@@ -28,9 +29,22 @@ router = Router()
         HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
     },
 )
-async def create_user(request: HttpRequest, user_data: CreateUserRequest) -> dict:
+async def create_user(request: HttpRequest, user_data: CreateUserRequest) -> tuple:
     auth_controller = await ADepends(AuthController)
     return await auth_controller.register(user_data)
+
+
+@router.put(
+    "/email/resend",
+    response={
+        HTTPStatus.OK: SuccessResponse,
+        HTTPStatus.BAD_REQUEST: ErrorResponse,
+        HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
+    },
+)
+async def resend_email(request: HttpRequest, credentials: ResendUserOtp) -> tuple:
+    auth_controller = await ADepends(AuthController)
+    return await auth_controller.resend_email(credentials)
 
 
 @router.put(
@@ -43,7 +57,7 @@ async def create_user(request: HttpRequest, user_data: CreateUserRequest) -> dic
 )
 async def validate_email(
     request: HttpRequest, credentials: AuthenticateUserOtp
-) -> dict:
+) -> tuple:
     auth_controller = await ADepends(AuthController)
     return await auth_controller.validate_email(credentials)
 
@@ -56,6 +70,6 @@ async def validate_email(
         HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
     },
 )
-async def login(request: HttpRequest, credentials: AuthenticateUserRequest) -> dict:
+async def login(request: HttpRequest, credentials: AuthenticateUserRequest) -> tuple:
     auth_controller = await ADepends(AuthController)
     return await auth_controller.login(credentials)

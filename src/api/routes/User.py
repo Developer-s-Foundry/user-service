@@ -25,7 +25,7 @@ router = Router()
         HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
     },
 )
-async def set_account_pin(request: HttpRequest, user_pin: Pin) -> dict:
+async def set_account_pin(request: HttpRequest, user_pin: Pin) -> tuple:
     user_id = getattr(request, "auth_id", "")
     user_controller = await ADepends(UserController)
     return await user_controller.set_account_pin(user_id, user_pin)
@@ -39,7 +39,7 @@ async def set_account_pin(request: HttpRequest, user_pin: Pin) -> dict:
         HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
     },
 )
-async def get_user(request: HttpRequest) -> dict:
+async def get_user(request: HttpRequest) -> tuple:
     user_id = getattr(request, "auth_id", "")
     user_controller = await ADepends(UserController)
     return await user_controller.get_user(user_id)
@@ -53,7 +53,7 @@ async def get_user(request: HttpRequest) -> dict:
         HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
     },
 )
-async def update_user(request: HttpRequest, user_data: UpdateUserRequest) -> dict:
+async def update_user(request: HttpRequest, user_data: UpdateUserRequest) -> tuple:
     user_id = getattr(request, "auth_id", "")
     user_controller = await ADepends(UserController)
     return await user_controller.update_user(user_id, user_data)
