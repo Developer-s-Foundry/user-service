@@ -4,3 +4,43 @@ Developers Foundry Wallet User Service System
 
 &nbsp;
 [![Version: v1.2.0](https://img.shields.io/badge/api-v1.2.0-blue?style=flat&logo=money)](CHANGELOG.md)
+
+---
+
+## OpenAPI/Swagger Documentation
+
+The Swagger documentation for the application is hosted on [Render](https://df-user-service.onrender.com/api/docs) along with the application server.
+
+## Setup
+
+- Clone the repository
+
+  ```bash
+  git clone https://github.com/Ifechukwu001/finapp.git finapp
+  cd finapp
+  ```
+
+- Setup UV. \
+  [Click to Install UV](https://docs.astral.sh/uv/getting-started/installation/)
+
+- Synchronize the package requirements
+
+  ```bash
+  uv sync
+  ```
+
+- Setup environment variables \
+  You can use .env file in the root directory to configure the variables \
+  _See the example in [ENV Example](.env.example)_
+
+- Run migrations
+
+  ```bash
+  uv run manage.py migrate --database pg
+  ```
+
+- Run the server locally on port 8000
+
+  ```bash
+  uv run manage.py runserver 8000
+  ```
