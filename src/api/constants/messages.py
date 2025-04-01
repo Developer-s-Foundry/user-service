@@ -5,6 +5,8 @@ from collections.abc import Callable
 class RegistrationMessages(TypedDict):
     EMAIL_EXISTS: str
     USER_REGISTERED: str
+    VERIFICATION_SUCCESS: str
+    VERIFICATION_FAILED: str
 
 
 class AuthMessages(TypedDict):
@@ -14,6 +16,14 @@ class AuthMessages(TypedDict):
     NOT_ACTIVE: str
     NOT_ENABLED: str
     IS_DELETED: str
+    SUCCESS: str
+
+
+class OtpMessages(TypedDict):
+    SEND_SUCCESS: str
+    VALIDATE_SUCCESS: str
+    VALIDATE_FAIL: str
+    USER_VALIDATED: str
 
 
 class UserMessages(TypedDict):
@@ -38,6 +48,7 @@ class CommonMessages(TypedDict):
 class Messages(TypedDict):
     REGISTRATION: RegistrationMessages
     AUTH: AuthMessages
+    OTP: OtpMessages
     USER: UserMessages
     ACCOUNT: AccountMessages
     COMMON: CommonMessages
@@ -63,6 +74,8 @@ MESSAGES: Messages = {
     "REGISTRATION": {
         "EMAIL_EXISTS": "Email already registered",
         "USER_REGISTERED": "User registration successful",
+        "VERIFICATION_SUCCESS": "User email verification successful",
+        "VERIFICATION_FAILED": "User email verification failed",
     },
     "AUTH": {
         "UNAUTHORIZED": "Unauthorized access",
@@ -71,6 +84,13 @@ MESSAGES: Messages = {
         "NOT_ACTIVE": "User account is inactive. Please contact support",
         "NOT_ENABLED": "User account is disabled. Please contact support",
         "IS_DELETED": "User account has been deleted. Please contact support if you want to restore your account",
+        "SUCCESS": "Successfully logged in",
+    },
+    "OTP": {
+        "SEND_SUCCESS": "OTP sent successfully",
+        "USER_VALIDATED": "User is already validated",
+        "VALIDATE_SUCCESS": "OTP validation was successful",
+        "VALIDATE_FAIL": "OTP validation failed",
     },
     "USER": {
         "DOESNT_EXIST": "User doesn't exist",

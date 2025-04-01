@@ -17,7 +17,7 @@ class UserController:
         self.logger = logger
         self.user_service = user_service
 
-    async def get_user(self, id: str) -> dict:
+    async def get_user(self, id: str) -> tuple:
         user = await self.user_service.get_user_information(id)
         if not user:
             return error_response(
@@ -29,7 +29,7 @@ class UserController:
             status_code=HTTPStatus.OK,
         )
 
-    async def update_user(self, id: str, user_data: UpdateUserRequest) -> dict:
+    async def update_user(self, id: str, user_data: UpdateUserRequest) -> tuple:
         user_data._id = id
         updated_user = await self.user_service.update(user_data)
         if not updated_user["is_success"]:
@@ -42,7 +42,7 @@ class UserController:
             status_code=HTTPStatus.OK,
         )
 
-    async def set_account_pin(self, id: str, user_pin: Pin) -> dict:
+    async def set_account_pin(self, id: str, user_pin: Pin) -> tuple:
         updated_pin = await self.user_service.set_pin(id, user_pin.pin)
         if not updated_pin["is_success"]:
             return error_response(

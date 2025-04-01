@@ -4,6 +4,9 @@ from typing import TypedDict
 class ActivityTypes(TypedDict):
     EXCEPTION: str
     USER_REGISTRATION: str
+    SEND_OTP: str
+    VALIDATE_OTP: str
+    RESEND_EMAIL: str
     EMAIL_VALIDATION: str
     USER_LOGIN: str
     FETCH_USER: str
@@ -19,6 +22,9 @@ class ActivityTypes(TypedDict):
 ACTIVITY_TYPES: ActivityTypes = {
     "EXCEPTION": "Exception handler",
     "USER_REGISTRATION": "User registration",
+    "SEND_OTP": "Send OTP",
+    "VALIDATE_OTP": "Validate OTP",
+    "RESEND_EMAIL": "Resend email validation",
     "EMAIL_VALIDATION": "Email validation",
     "USER_LOGIN": "User login",
     "FETCH_USER": "Get user details",

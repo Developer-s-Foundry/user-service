@@ -22,7 +22,7 @@ class WithdrawalAccountController:
 
     async def add_withdrawal_account(
         self, user_id: str, account_data: AddWithdrawalAccountRequest
-    ) -> dict:
+    ) -> tuple:
         created_wallet = await self.withdraw_service.add_withdrawal_account(
             user_id, account_data
         )
@@ -34,7 +34,7 @@ class WithdrawalAccountController:
             message=created_wallet["message"], status_code=HTTPStatus.BAD_REQUEST
         )
 
-    async def list_withdrawal_accounts(self, user_id: str) -> dict:
+    async def list_withdrawal_accounts(self, user_id: str) -> tuple:
         withdrawal_accounts = await self.withdraw_service.fetch_withdrawal_accounts(
             user_id
         )
@@ -44,7 +44,7 @@ class WithdrawalAccountController:
             status_code=HTTPStatus.OK,
         )
 
-    async def get_withdrawal_account(self, user_id: str, id: int) -> dict:
+    async def get_withdrawal_account(self, user_id: str, id: int) -> tuple:
         withdrawal_account = await self.withdraw_service.get_withdrawal_account(
             user_id, id
         )
@@ -59,7 +59,7 @@ class WithdrawalAccountController:
             status_code=HTTPStatus.OK,
         )
 
-    async def delete_withdrawal_account(self, user_id: str, id: int) -> dict:
+    async def delete_withdrawal_account(self, user_id: str, id: int) -> tuple:
         withdrawal_account_deleted = (
             await self.withdraw_service.delete_withdrawal_account(user_id, id)
         )

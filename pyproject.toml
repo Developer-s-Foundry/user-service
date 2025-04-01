@@ -1,5 +1,5 @@
 [project]
-name = "df-wallet"
+name = "df-wallet-user-service"
 dynamic = ["version"]
 description = "Developers Foundry Wallet System"
 readme = "README.md"
