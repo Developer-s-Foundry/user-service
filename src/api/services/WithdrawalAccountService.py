@@ -3,7 +3,7 @@ from typing import Annotated
 from src.utils.svcs import Service
 from src.utils.logger import Logger
 from src.api.models.postgres import UserWithdrawalInformation
-from src.api.constants.messages import MESSAGES, DYNAMIC_MESSSAGES
+from src.api.constants.messages import MESSAGES, DYNAMIC_MESSAGES
 from src.api.typing.AccountSuccess import AccountSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
@@ -42,7 +42,7 @@ class WithdrawalAccountService:
             )
         )
         if account_already_exists:
-            message = DYNAMIC_MESSSAGES["ACCOUNT"]["EXISTS"](req.account_number)
+            message = DYNAMIC_MESSAGES["ACCOUNT"]["EXISTS"](req.account_number)
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["ADD_WITHDRAW_ACCOUNT"],
@@ -107,7 +107,7 @@ class WithdrawalAccountService:
     async def get_withdrawal_account(self, user_id: str, id: int) -> AccountSuccess:
         withdrawal_account = await UserWithdrawalInformationRepository.find_by_id(id)
         if not withdrawal_account:
-            message = DYNAMIC_MESSSAGES["COMMON"]["NOT_FOUND"]("Account")
+            message = DYNAMIC_MESSAGES["COMMON"]["NOT_FOUND"]("Account")
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["FETCH_WITHDRAW_ACCOUNT"],
@@ -137,7 +137,7 @@ class WithdrawalAccountService:
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["FETCH_WITHDRAW_ACCOUNT"],
-                "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_SUCCESS"](
+                "message": DYNAMIC_MESSAGES["COMMON"]["FETCHED_SUCCESS"](
                     "User Account"
                 ),
                 "metadata": {
@@ -155,7 +155,7 @@ class WithdrawalAccountService:
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["LIST_WITHDRAW_ACCOUNTS"],
-                "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_SUCCESS"](
+                "message": DYNAMIC_MESSAGES["COMMON"]["FETCHED_SUCCESS"](
                     "User Accounts"
                 ),
                 "metadata": {"user": {"id": user_id}},
@@ -168,7 +168,7 @@ class WithdrawalAccountService:
             id
         )
         if not account_already_exists:
-            message = DYNAMIC_MESSSAGES["COMMON"]["NOT_FOUND"]("Account")
+            message = DYNAMIC_MESSAGES["COMMON"]["NOT_FOUND"]("Account")
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["DELETE_WITHDRAW_ACCOUNT"],
@@ -200,7 +200,7 @@ class WithdrawalAccountService:
 
         await UserWithdrawalInformationRepository.delete_user_withdrawal_account(id)
 
-        message = DYNAMIC_MESSSAGES["COMMON"]["DELETED"]("Withdrawal account")
+        message = DYNAMIC_MESSAGES["COMMON"]["DELETED"]("Withdrawal account")
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["DELETE_WITHDRAW_ACCOUNT"],

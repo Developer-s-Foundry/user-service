@@ -3,7 +3,7 @@ from typing import Annotated
 from src.utils.svcs import Service
 from src.utils.logger import Logger
 from src.api.models.postgres import User
-from src.api.constants.messages import MESSAGES, DYNAMIC_MESSSAGES
+from src.api.constants.messages import MESSAGES, DYNAMIC_MESSAGES
 from src.api.typing.UserSuccess import UserSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
@@ -29,7 +29,7 @@ class UserService:
             self.logger.info(
                 {
                     "activity_type": ACTIVITY_TYPES["FETCH_USER"],
-                    "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_SUCCESS"]("User"),
+                    "message": DYNAMIC_MESSAGES["COMMON"]["FETCHED_SUCCESS"]("User"),
                     "metadata": {"user": {"id": user.id, "email": user.email}},
                 }
             )
@@ -37,7 +37,7 @@ class UserService:
             self.logger.warn(
                 {
                     "activity_type": ACTIVITY_TYPES["FETCH_USER"],
-                    "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_FAILED"]("User"),
+                    "message": DYNAMIC_MESSAGES["COMMON"]["FETCHED_FAILED"]("User"),
                     "metadata": {"user": {"id": id}},
                 }
             )
@@ -83,15 +83,13 @@ class UserService:
             "message": MESSAGES["USER"]["PIN_SET"],
         }
 
-    async def update(self, req: UpdateUserRequest) -> UserSuccess:
-        id = req._id
-
+    async def update(self, id: str, req: UpdateUserRequest) -> UserSuccess:
         existing_user = await UserRepository.find_by_id(id)
         if not existing_user:
             self.logger.warn(
                 {
                     "activity_type": ACTIVITY_TYPES["UPDATE_USER"],
-                    "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_FAILED"]("User"),
+                    "message": DYNAMIC_MESSAGES["COMMON"]["FETCHED_FAILED"]("User"),
                     "metadata": {"user": {"id": id}},
                 }
             )

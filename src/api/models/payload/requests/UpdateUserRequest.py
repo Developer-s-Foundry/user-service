@@ -4,7 +4,6 @@ from pydantic import Field, BaseModel
 
 
 class UpdateUserRequest(BaseModel):
-    _id: str
     first_name: str | None = None
     last_name: str | None = None
     address: str | None = None

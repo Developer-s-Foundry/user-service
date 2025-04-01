@@ -17,6 +17,10 @@ class ActivityTypes(TypedDict):
     LIST_WITHDRAW_ACCOUNTS: str
     FETCH_WITHDRAW_ACCOUNT: str
     DELETE_WITHDRAW_ACCOUNT: str
+    FETCH_NOK: str
+    UPDATE_NOK: str
+    FETCH_KYC: str
+    UPDATE_KYC: str
 
 
 ACTIVITY_TYPES: ActivityTypes = {
@@ -35,6 +39,10 @@ ACTIVITY_TYPES: ActivityTypes = {
     "LIST_WITHDRAW_ACCOUNTS": "List withdraw accounts",
     "FETCH_WITHDRAW_ACCOUNT": "Get withdraw account",
     "DELETE_WITHDRAW_ACCOUNT": "Delete withdraw account",
+    "FETCH_NOK": "Fetch Next Of Kin",
+    "UPDATE_NOK": "Update Next Of Kin",
+    "FETCH_KYC": "Fetch KYC Information",
+    "UPDATE_KYC": "Update KYC Information",
 }
 
 __all__ = ["ACTIVITY_TYPES"]

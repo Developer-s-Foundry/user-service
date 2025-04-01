@@ -1,4 +1,4 @@
-from src.env import log
+from src.env import env, log
 
 LOGGING = {
     "version": 1,
@@ -6,7 +6,9 @@ LOGGING = {
     "loggers": {
         "df_wallet": {
             "level": log["level"],
-            "handlers": ["console", "combined_file", "error_file"],
+            "handlers": ["console"]
+            if env.isLocal or env.isTest
+            else ["combined_file", "error_file"],
         },
     },
     "formatters": {

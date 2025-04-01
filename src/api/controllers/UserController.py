@@ -3,6 +3,7 @@ from typing import Annotated
 
 from src.utils.svcs import Service
 from src.utils.logger import Logger
+from src.api.constants.messages import MESSAGES, DYNAMIC_MESSAGES
 from src.api.services.UserService import UserService
 from src.api.utils.response_format import error_response, success_response
 from src.api.models.payload.requests.Pin import Pin
@@ -21,17 +22,17 @@ class UserController:
         user = await self.user_service.get_user_information(id)
         if not user:
             return error_response(
-                message="User does not exists", status_code=HTTPStatus.NOT_FOUND
+                message=MESSAGES["USER"]["DOESNT_EXIST"],
+                status_code=HTTPStatus.NOT_FOUND,
             )
         return success_response(
-            message="Successfully retrieved user detail",
+            message=DYNAMIC_MESSAGES["COMMON"]["FETCHED_SUCCESS"]("User"),
             data=user,
             status_code=HTTPStatus.OK,
         )
 
     async def update_user(self, id: str, user_data: UpdateUserRequest) -> tuple:
-        user_data._id = id
-        updated_user = await self.user_service.update(user_data)
+        updated_user = await self.user_service.update(id, user_data)
         if not updated_user["is_success"]:
             return error_response(
                 message=updated_user["message"], status_code=HTTPStatus.BAD_REQUEST
