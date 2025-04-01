@@ -23,7 +23,13 @@ authentication = Depends(Authentication)
 
 api.add_router("/auth", "src.api.routes.Auth.router", tags=["Auth"])
 api.add_router(
+    "/password/reset", "src.api.routes.PasswordReset.router", tags=["Password"]
+)
+api.add_router(
     "/users", "src.api.routes.User.router", auth=authentication, tags=["User"]
+)
+api.add_router(
+    "/kyc", "src.api.routes.UserKYC.router", auth=authentication, tags=["User KYC"]
 )
 api.add_router(
     "/next-of-kin",
@@ -36,7 +42,4 @@ api.add_router(
     "src.api.routes.WithdrawalAccount.router",
     auth=authentication,
     tags=["User"],
-)
-api.add_router(
-    "/password/reset", "src.api.routes.PasswordReset.router", tags=["Password"]
 )

@@ -45,6 +45,11 @@ class NextOfKinMessages(TypedDict):
     UPDATED: str
 
 
+class KYCInformationMessages(TypedDict):
+    FETCHED: str
+    UPDATED: str
+
+
 class CommonMessages(TypedDict):
     INTERNAL_SERVER_ERROR: str
     JWT_GENERATED: str
@@ -58,6 +63,7 @@ class Messages(TypedDict):
     USER: UserMessages
     ACCOUNT: AccountMessages
     NOK: NextOfKinMessages
+    KYC: KYCInformationMessages
     COMMON: CommonMessages
 
 
@@ -114,6 +120,10 @@ MESSAGES: Messages = {
     "NOK": {
         "FETCHED": "Next of Kin fetched successfully",
         "UPDATED": "Next of Kin updated successfully",
+    },
+    "KYC": {
+        "FETCHED": "KYC Information fetched successfully",
+        "UPDATED": "KYC Information updated successfully",
     },
     "COMMON": {
         "INTERNAL_SERVER_ERROR": "Something went wrong",
