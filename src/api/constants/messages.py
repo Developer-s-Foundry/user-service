@@ -40,9 +40,15 @@ class AccountMessages(TypedDict):
     UPDATED: str
 
 
+class NextOfKinMessages(TypedDict):
+    FETCHED: str
+    UPDATED: str
+
+
 class CommonMessages(TypedDict):
     INTERNAL_SERVER_ERROR: str
     JWT_GENERATED: str
+    VALIDATION_ERROR: str
 
 
 class Messages(TypedDict):
@@ -51,6 +57,7 @@ class Messages(TypedDict):
     OTP: OtpMessages
     USER: UserMessages
     ACCOUNT: AccountMessages
+    NOK: NextOfKinMessages
     COMMON: CommonMessages
 
 
@@ -104,13 +111,18 @@ MESSAGES: Messages = {
         "SAVED": "Withdrawal account details saved succesfully",
         "UPDATED": "User Withdraw account updated successfully",
     },
+    "NOK": {
+        "FETCHED": "Next of Kin fetched successfully",
+        "UPDATED": "Next of Kin updated successfully",
+    },
     "COMMON": {
         "INTERNAL_SERVER_ERROR": "Something went wrong",
         "JWT_GENERATED": "JWT was generated",
+        "VALIDATION_ERROR": "Validation errors",
     },
 }
 
-DYNAMIC_MESSSAGES: DynamicMessages = {
+DYNAMIC_MESSAGES: DynamicMessages = {
     "COMMON": {
         "FETCHED_SUCCESS": lambda x: f"{x} fetched successfully",
         "FETCHED_FAILED": lambda x: f"{x} fetch failed",
@@ -122,4 +134,4 @@ DYNAMIC_MESSSAGES: DynamicMessages = {
     },
 }
 
-__all__ = ["DYNAMIC_MESSSAGES", "MESSAGES"]
+__all__ = ["DYNAMIC_MESSAGES", "MESSAGES"]
