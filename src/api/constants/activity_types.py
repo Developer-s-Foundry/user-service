@@ -17,6 +17,8 @@ class ActivityTypes(TypedDict):
     LIST_WITHDRAW_ACCOUNTS: str
     FETCH_WITHDRAW_ACCOUNT: str
     DELETE_WITHDRAW_ACCOUNT: str
+    CHANGE_PASSWORD: str
+    RESET_PASSWORD: str
 
 
 ACTIVITY_TYPES: ActivityTypes = {
@@ -35,6 +37,8 @@ ACTIVITY_TYPES: ActivityTypes = {
     "LIST_WITHDRAW_ACCOUNTS": "List withdraw accounts",
     "FETCH_WITHDRAW_ACCOUNT": "Get withdraw account",
     "DELETE_WITHDRAW_ACCOUNT": "Delete withdraw account",
+    "CHANGE_PASSWORD": "Change user password",
+    "RESET_PASSWORD": "Reset user password",
 }
 
 __all__ = ["ACTIVITY_TYPES"]

@@ -1,13 +1,14 @@
 from typing import Annotated
 
-from src.utils.svcs import Service
-from src.utils.logger import Logger
-from src.api.models.postgres import User
-from src.api.constants.messages import MESSAGES, DYNAMIC_MESSSAGES
-from src.api.typing.UserSuccess import UserSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
+from src.api.constants.messages import DYNAMIC_MESSSAGES, MESSAGES
+from src.api.models.payload.requests.UpdateUserRequest import (
+    ChangeUserPasswordRequest, UpdateUserRequest)
+from src.api.models.postgres import User
 from src.api.repositories.UserRepository import UserRepository
-from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
+from src.api.typing.UserSuccess import UserSuccess
+from src.utils.logger import Logger
+from src.utils.svcs import Service
 
 from .UtilityService import UtilityService
 
@@ -114,3 +115,46 @@ class UserService:
         user = self.utility_service.sanitize_user_object(updated_user)
 
         return {"is_success": True, "user": user}
+
+    async def change_password(self, req: ChangeUserPasswordRequest) -> UserSuccess:
+        id = req._id
+        existing_user = await UserRepository.find_by_id(id)
+        old_password = req.old_password
+        new_password = req.new_password
+        
+        if not existing_user:
+            self.logger.warn(
+                {
+                    "activity_type": ACTIVITY_TYPES["CHANGE_PASSWORD"],
+                    "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_FAILED"]("User"),
+                    "metadata": {"user": {"id": id}},
+                }
+            )
+            return {"is_success": False, "message": MESSAGES["USER"]["DOESNT_EXIST"]}
+
+        is_valid_old_password = await self.utility_service.compare_hash(
+            old_password, existing_user.password
+        )
+        if not is_valid_old_password:
+            message = MESSAGES['USER']['INCORRECT_PASSWORD']
+            self.logger.warn(
+                {
+                    "activity_type": ACTIVITY_TYPES["CHANGE_PASSWORD"],
+                    "message": message,
+                    "metadata": {"user": {"id": id}},
+                }
+            )
+            return {"is_success": False, "message": message}
+    
+        new_password_hash = await self.utility_service.hash_string(new_password)
+        await UserRepository.update_by_user(existing_user, {"password": new_password_hash})
+        message = MESSAGES["USER"]["PASSWORD_CHANGED"]
+        self.logger.info(
+            {
+                "activity_type": ACTIVITY_TYPES["CHANGE_PASSWORD"],
+                "message": message,
+                "metadata": {"user": {"id": id}},
+            }
+        )
+
+        return {"is_success": True, "message": message}

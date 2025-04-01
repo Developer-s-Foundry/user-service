@@ -1,12 +1,13 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from src.utils.svcs import Service
-from src.utils.logger import Logger
+from src.api.models.payload.requests.Pin import Pin
+from src.api.models.payload.requests.UpdateUserRequest import (
+    ChangeUserPasswordRequest, UpdateUserRequest)
 from src.api.services.UserService import UserService
 from src.api.utils.response_format import error_response, success_response
-from src.api.models.payload.requests.Pin import Pin
-from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
+from src.utils.logger import Logger
+from src.utils.svcs import Service
 
 
 @Service()
@@ -50,4 +51,16 @@ class UserController:
             )
         return success_response(
             message=updated_pin["message"], status_code=HTTPStatus.OK
+        )
+
+    async def change_password(self, id: str, user_data: ChangeUserPasswordRequest) -> tuple:
+        user_data._id = id
+        updated_password = await self.user_service.change_password(user_data)
+        if not updated_password["is_success"]:
+            return error_response(
+                message=updated_password["message"], status_code=HTTPStatus.BAD_REQUEST
+            )
+        return success_response(
+            message=updated_password["message"],
+            status_code=HTTPStatus.OK,
         )

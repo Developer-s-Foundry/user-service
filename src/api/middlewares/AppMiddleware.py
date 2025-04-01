@@ -1,12 +1,14 @@
+from http import HTTPStatus
 from typing import Annotated
 
 import jwt
 from django.http import HttpRequest
+from ninja.errors import HttpError
 from ninja.security import HttpBearer
 
 from src.env import jwt_config
-from src.utils.svcs import Service
 from src.utils.logger import Logger
+from src.utils.svcs import Service
 
 
 @Service()
@@ -22,6 +24,20 @@ class Authentication(HttpBearer):
             algorithms=["HS256"],
             options={"verify_signature": False},
         )
+
+        email = jwt_data.get("email")
+        user_id = jwt_data.get("user_id")
+        if not email or not user_id:
+            message = "Invalid authentication token"
+            self.logger.error(
+                {
+                    "activity_type": "Authenticate User",
+                    "message": message,
+                    "metadata": {"token": token},
+                }
+            )
+            raise HttpError(HTTPStatus.UNAUTHORIZED, message)
+
         self.logger.debug(
             {
                 "activity_type": "Authenticate User",

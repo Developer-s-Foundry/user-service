@@ -1,5 +1,5 @@
-from typing import TypedDict
 from collections.abc import Callable
+from typing import TypedDict
 
 
 class RegistrationMessages(TypedDict):
@@ -33,6 +33,8 @@ class UserMessages(TypedDict):
     NOT_ALLOWED: str
     PIN_EXISTS: str
     PIN_SET: str
+    INCORRECT_PASSWORD: str
+    PASSWORD_CHANGED: str
 
 
 class AccountMessages(TypedDict):
@@ -99,6 +101,8 @@ MESSAGES: Messages = {
         "PIN_EXISTS": "You already have a transaction PIN on your account!",
         "PIN_SET": "Transaction PIN set successfully",
         "NOT_ALLOWED": "Unauthorized request!",
+        "INCORRECT_PASSWORD": "Incorrect old password",
+        "PASSWORD_CHANGED": "Password changed successfully",
     },
     "ACCOUNT": {
         "SAVED": "Withdrawal account details saved succesfully",

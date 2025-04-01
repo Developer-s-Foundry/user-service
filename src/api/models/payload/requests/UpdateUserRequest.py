@@ -1,6 +1,8 @@
 from typing import Annotated
 
-from pydantic import Field, BaseModel
+from pydantic import BaseModel, Field
+
+from src.api.typing.PasswordValidator import IsStrongPassword
 
 
 class UpdateUserRequest(BaseModel):
@@ -10,3 +12,9 @@ class UpdateUserRequest(BaseModel):
     address: str | None = None
     phone_number: str | None = None
     state_lga_id: Annotated[int, Field(default=None, ge=1)]
+
+
+class ChangeUserPasswordRequest(BaseModel):
+    _id: str
+    old_password: str
+    new_password: IsStrongPassword
