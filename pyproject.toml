@@ -35,8 +35,7 @@ version = { attr = "src.__version__" }
 
 [tool.ruff]
 fix = true
-src = ["src"]
-extend-exclude = ["**/migrations/*.py"]
+extend-exclude = ["manage.py", "**/migrations/*.py"]
 
 [tool.ruff.lint]
 extend-select = [
