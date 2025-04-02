@@ -1,6 +1,5 @@
-import inspect
 import logging
-from typing import TypedDict, get_type_hints
+from typing import TypedDict
 
 from src.env import app
 
@@ -14,14 +13,6 @@ class LogDataFormat(TypedDict):
 # @Service()
 class Logger:
     def __init__(self, context: str = "Root") -> None:
-        frame = inspect.currentframe()
-        if frame and (fb := frame.f_back) and (class_self := fb.f_locals.get("self")):
-            # Extract metadata from the constructor
-            init_params = get_type_hints(class_self.__class__.__init__)
-            metadata = init_params.get("logger", None)
-
-            if metadata and hasattr(metadata, "__metadata__"):
-                context = metadata.__metadata__[0]
         self.context = context
 
     def debug(

@@ -1,6 +1,5 @@
 from typing import TypeVar, Annotated, get_type_hints
 
-from asgiref.sync import async_to_sync
 from svcs.exceptions import ServiceNotFoundError
 
 from src.utils.logger import Logger
@@ -15,9 +14,6 @@ async def ADepends(cls: type[T]) -> T:
     request = context.request.get()
     container = svcs_from(request)
     return await container.aget(cls)
-
-
-Depends = async_to_sync(ADepends)
 
 
 async def get_logger(ann_context: str = "Root") -> Logger:

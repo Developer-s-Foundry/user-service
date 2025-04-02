@@ -1,17 +1,13 @@
-from typing import Annotated
-
 import jwt
 from django.http import HttpRequest
 from ninja.security import HttpBearer
 
 from src.env import jwt_config
-from src.utils.svcs import Service
 from src.utils.logger import Logger
 
 
-@Service()
 class Authentication(HttpBearer):
-    def __init__(self, logger: Annotated[Logger, "Authentication"]) -> None:
+    def __init__(self, logger: Logger) -> None:
         super().__init__()
         self.logger = logger
 
@@ -35,3 +31,10 @@ class Authentication(HttpBearer):
         setattr(request, "auth_email", jwt_data["email"])
         setattr(request, "auth_id", jwt_data["user_id"])
         return token
+
+
+def get_authentication() -> Authentication:
+    return Authentication(Logger("Authentication"))
+
+
+authentication = get_authentication()
