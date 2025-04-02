@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from ninja import Schema, ModelSchema
+from ninja import ModelSchema, Schema
 
 from src.api.models.postgres import User as UserModel
 

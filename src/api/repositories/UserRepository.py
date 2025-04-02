@@ -1,5 +1,5 @@
-from src.api.models.postgres import User
 from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
+from src.api.models.postgres import User
 
 from ._base import BaseRepository
 
@@ -39,3 +39,7 @@ class UserRepository(BaseRepository[User]):
                 setattr(user, key, value)
             await user.asave()
         return user
+
+    @classmethod
+    async def find_by_reset_token(cls, reset_token: str) -> User | None:
+        return await cls.manager.filter(password_reset_token=reset_token).afirst()
