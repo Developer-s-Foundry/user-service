@@ -2,8 +2,7 @@ from ninja import NinjaAPI
 from django.http import HttpRequest
 
 from src.env import app
-from src.utils.svcs import Depends
-from src.api.middlewares.AppMiddleware import Authentication
+from src.api.middlewares.AppMiddleware import authentication
 
 api: NinjaAPI = NinjaAPI(
     version=app["version"],
@@ -15,11 +14,9 @@ from src.api.utils import error_handlers  # noqa: E402, F401
 
 
 @api.get("/")
-def home(request: HttpRequest) -> dict:
+async def home(request: HttpRequest) -> dict:
     return {"message": "Hello, World!"}
 
-
-authentication = Depends(Authentication)
 
 api.add_router("/auth", "src.api.routes.Auth.router", tags=["Auth"])
 api.add_router(
