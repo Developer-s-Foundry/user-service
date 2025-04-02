@@ -90,6 +90,7 @@ wheels = [
 
 [[package]]
 name = "df-wallet-user-service"
+version = "1.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "bcrypt" },
