@@ -56,7 +56,9 @@ class UserController:
             message=updated_pin["message"], status_code=HTTPStatus.OK
         )
 
-    async def change_password(self, id: str, user_data: ChangeUserPasswordRequest) -> tuple:
+    async def change_password(
+        self, id: str, user_data: ChangeUserPasswordRequest
+    ) -> tuple:
         updated_password = await self.user_service.change_password(id, user_data)
         if not updated_password["is_success"]:
             return error_response(

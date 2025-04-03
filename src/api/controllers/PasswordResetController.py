@@ -29,8 +29,8 @@ class PasswordResetController:
                 user_data
             )
             return success_response(
-                message=sent_request["message"],
-                status_code=HTTPStatus.OK)
+                message=sent_request["message"], status_code=HTTPStatus.OK
+            )
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise
@@ -43,13 +43,16 @@ class PasswordResetController:
             )
             raise HttpError(HTTPStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
 
-    
-    async def confirm_password_reset(self, user_data: ConfirmPasswordResetRequest) -> tuple:
+    async def confirm_password_reset(
+        self, user_data: ConfirmPasswordResetRequest
+    ) -> tuple:
         try:
             sent_request = await self.password_reset_service.confirm_password_reset(
                 user_data
             )
-            return success_response(message=sent_request["message"], status_code=HTTPStatus.OK)
+            return success_response(
+                message=sent_request["message"], status_code=HTTPStatus.OK
+            )
         except Exception as exc:
             if isinstance(exc, HttpError):
                 raise

@@ -116,11 +116,13 @@ class UserService:
 
         return {"is_success": True, "user": user}
 
-    async def change_password(self, id: str, req: ChangeUserPasswordRequest) -> UserSuccess:
+    async def change_password(
+        self, id: str, req: ChangeUserPasswordRequest
+    ) -> UserSuccess:
         existing_user = await UserRepository.find_by_id(id)
         old_password = req.old_password
         new_password = req.new_password
-        
+
         if not existing_user:
             self.logger.warn(
                 {
@@ -135,7 +137,7 @@ class UserService:
             old_password, existing_user.password
         )
         if not is_valid_old_password:
-            message = MESSAGES['USER']['INCORRECT_PASSWORD']
+            message = MESSAGES["USER"]["INCORRECT_PASSWORD"]
             self.logger.warn(
                 {
                     "activity_type": ACTIVITY_TYPES["CHANGE_PASSWORD"],
@@ -144,9 +146,11 @@ class UserService:
                 }
             )
             return {"is_success": False, "message": message}
-    
+
         new_password_hash = await self.utility_service.hash_string(new_password)
-        await UserRepository.update_by_user(existing_user, {"password": new_password_hash})
+        await UserRepository.update_by_user(
+            existing_user, {"password": new_password_hash}
+        )
         message = MESSAGES["USER"]["PASSWORD_CHANGED"]
         self.logger.info(
             {

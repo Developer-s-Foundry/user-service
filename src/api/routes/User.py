@@ -70,7 +70,9 @@ async def update_user(request: HttpRequest, user_data: UpdateUserRequest) -> tup
         HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
     },
 )
-async def update_password(request: HttpRequest, user_data: ChangeUserPasswordRequest) -> tuple:
+async def update_password(
+    request: HttpRequest, user_data: ChangeUserPasswordRequest
+) -> tuple:
     user_id = getattr(request, "auth_id", "")
     user_controller = await ADepends(UserController)
     return await user_controller.change_password(user_id, user_data)

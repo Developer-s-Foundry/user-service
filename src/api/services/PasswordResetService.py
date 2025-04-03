@@ -32,8 +32,8 @@ class PasswordResetService:
         if not existing_user:
             self.logger.warn(
                 {
-                    "activity_type": ACTIVITY_TYPES['REQUEST_RESET_PASSWORD'],
-                    "message": MESSAGES['USER']["DOESNT_EXIST"],
+                    "activity_type": ACTIVITY_TYPES["REQUEST_RESET_PASSWORD"],
+                    "message": MESSAGES["USER"]["DOESNT_EXIST"],
                     "metadata": {"user": {"email": req.email}},
                 }
             )
@@ -74,9 +74,12 @@ class PasswordResetService:
 
         self.logger.info(
             {
-                "activity_type": ACTIVITY_TYPES['REQUEST_RESET_PASSWORD'],
+                "activity_type": ACTIVITY_TYPES["REQUEST_RESET_PASSWORD"],
                 "message": "Password reset token set",
-                "metadata": {"user": {"email": req.email}, "reset_token": existing_user.password_reset_token},
+                "metadata": {
+                    "user": {"email": req.email},
+                    "reset_token": existing_user.password_reset_token,
+                },
             }
         )
         return {
@@ -84,8 +87,9 @@ class PasswordResetService:
             "message": DYNAMIC_MESSAGES["PASSWORD_RESET"]["EMAIL_SENT"](req.email),
         }
 
-
-    async def confirm_password_reset(self, req: ConfirmPasswordResetRequest) -> UserSuccess:
+    async def confirm_password_reset(
+        self, req: ConfirmPasswordResetRequest
+    ) -> UserSuccess:
         existing_user = await UserRepository.find_by_reset_token(req.reset_token)
         if not existing_user:
             self.logger.warn(
@@ -137,7 +141,9 @@ class PasswordResetService:
                 "message": MESSAGES["PASSWORD_RESET"]["TOKEN_EXPIRED"],
             }
         new_password_hash = await self.utility_service.hash_string(req.new_password)
-        await UserRepository.update_by_user(existing_user, {"password": new_password_hash})
+        await UserRepository.update_by_user(
+            existing_user, {"password": new_password_hash}
+        )
         message = MESSAGES["PASSWORD_RESET"]["PASSWORD_RESET"]
         self.logger.info(
             {
@@ -148,4 +154,3 @@ class PasswordResetService:
         )
 
         return {"is_success": True, "message": message}
-        
