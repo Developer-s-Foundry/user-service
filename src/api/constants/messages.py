@@ -33,6 +33,8 @@ class UserMessages(TypedDict):
     NOT_ALLOWED: str
     PIN_EXISTS: str
     PIN_SET: str
+    INCORRECT_PASSWORD: str
+    PASSWORD_CHANGED: str
 
 
 class AccountMessages(TypedDict):
@@ -56,6 +58,14 @@ class CommonMessages(TypedDict):
     VALIDATION_ERROR: str
 
 
+class PasswordResetMessages(TypedDict):
+    EMAIL_SENT: str
+    INVALID_TOKEN: str
+    TOKEN_EXPIRED: str
+    PASSWORD_RESET: str
+    DOESNT_EXIST: str
+
+
 class Messages(TypedDict):
     REGISTRATION: RegistrationMessages
     AUTH: AuthMessages
@@ -65,6 +75,7 @@ class Messages(TypedDict):
     NOK: NextOfKinMessages
     KYC: KYCInformationMessages
     COMMON: CommonMessages
+    PASSWORD_RESET: PasswordResetMessages
 
 
 class DynamicCommonMessages(TypedDict):
@@ -78,9 +89,14 @@ class DynamicAccountMessages(TypedDict):
     EXISTS: Callable[[str], str]
 
 
+class DynamicPasswordResetMessages(TypedDict):
+    EMAIL_SENT: Callable[[str], str]
+
+
 class DynamicMessages(TypedDict):
     COMMON: DynamicCommonMessages
     ACCOUNT: DynamicAccountMessages
+    PASSWORD_RESET: DynamicPasswordResetMessages
 
 
 MESSAGES: Messages = {
@@ -112,6 +128,8 @@ MESSAGES: Messages = {
         "PIN_EXISTS": "You already have a transaction PIN on your account!",
         "PIN_SET": "Transaction PIN set successfully",
         "NOT_ALLOWED": "Unauthorized request!",
+        "INCORRECT_PASSWORD": "Incorrect old password",
+        "PASSWORD_CHANGED": "Password changed successfully",
     },
     "ACCOUNT": {
         "SAVED": "Withdrawal account details saved succesfully",
@@ -130,6 +148,13 @@ MESSAGES: Messages = {
         "JWT_GENERATED": "JWT was generated",
         "VALIDATION_ERROR": "Validation errors",
     },
+    "PASSWORD_RESET": {
+        "EMAIL_SENT": "Password reset email sent successfully to your email",
+        "PASSWORD_RESET": "Password reset successfully",
+        "INVALID_TOKEN": "Invalid password reset token!",
+        "DOESNT_EXIST": "You don't have an account with us yet!",
+        "TOKEN_EXPIRED": "Password reset token has expired!",
+    },
 }
 
 DYNAMIC_MESSAGES: DynamicMessages = {
@@ -141,6 +166,9 @@ DYNAMIC_MESSAGES: DynamicMessages = {
     },
     "ACCOUNT": {
         "EXISTS": lambda x: f"You already have an account with the account number {x}!"
+    },
+    "PASSWORD_RESET": {
+        "EMAIL_SENT": lambda x: f"Password reset email has been sent to {x}",
     },
 }
 

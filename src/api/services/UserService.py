@@ -7,7 +7,10 @@ from src.api.constants.messages import MESSAGES, DYNAMIC_MESSAGES
 from src.api.typing.UserSuccess import UserSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
-from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
+from src.api.models.payload.requests.UpdateUserRequest import (
+    UpdateUserRequest,
+    ChangeUserPasswordRequest,
+)
 
 from .UtilityService import UtilityService
 
@@ -112,3 +115,49 @@ class UserService:
         user = self.utility_service.sanitize_user_object(updated_user)
 
         return {"is_success": True, "user": user}
+
+    async def change_password(
+        self, id: str, req: ChangeUserPasswordRequest
+    ) -> UserSuccess:
+        existing_user = await UserRepository.find_by_id(id)
+        old_password = req.old_password
+        new_password = req.new_password
+
+        if not existing_user:
+            self.logger.warn(
+                {
+                    "activity_type": ACTIVITY_TYPES["CHANGE_PASSWORD"],
+                    "message": DYNAMIC_MESSAGES["COMMON"]["FETCHED_FAILED"]("User"),
+                    "metadata": {"user": {"id": id}},
+                }
+            )
+            return {"is_success": False, "message": MESSAGES["USER"]["DOESNT_EXIST"]}
+
+        is_valid_old_password = await self.utility_service.compare_hash(
+            old_password, existing_user.password
+        )
+        if not is_valid_old_password:
+            message = MESSAGES["USER"]["INCORRECT_PASSWORD"]
+            self.logger.warn(
+                {
+                    "activity_type": ACTIVITY_TYPES["CHANGE_PASSWORD"],
+                    "message": message,
+                    "metadata": {"user": {"id": id}},
+                }
+            )
+            return {"is_success": False, "message": message}
+
+        new_password_hash = await self.utility_service.hash_string(new_password)
+        await UserRepository.update_by_user(
+            existing_user, {"password": new_password_hash}
+        )
+        message = MESSAGES["USER"]["PASSWORD_CHANGED"]
+        self.logger.info(
+            {
+                "activity_type": ACTIVITY_TYPES["CHANGE_PASSWORD"],
+                "message": message,
+                "metadata": {"user": {"id": id}},
+            }
+        )
+
+        return {"is_success": True, "message": message}
