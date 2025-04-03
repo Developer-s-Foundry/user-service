@@ -18,10 +18,6 @@ async def home(request: HttpRequest) -> dict:
     return {"message": "Hello, World!"}
 
 
-api.add_router("/auth", "src.api.routes.Auth.router", tags=["Auth"])
-api.add_router(
-    "/password/reset", "src.api.routes.PasswordReset.router", tags=["Password"]
-)
 api.add_router(
     "/users", "src.api.routes.User.router", auth=authentication, tags=["User"]
 )

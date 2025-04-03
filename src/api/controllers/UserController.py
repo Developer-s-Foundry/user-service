@@ -7,10 +7,7 @@ from src.api.constants.messages import MESSAGES, DYNAMIC_MESSAGES
 from src.api.services.UserService import UserService
 from src.api.utils.response_format import error_response, success_response
 from src.api.models.payload.requests.Pin import Pin
-from src.api.models.payload.requests.UpdateUserRequest import (
-    UpdateUserRequest,
-    ChangeUserPasswordRequest,
-)
+from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
 
 
 @Service()
@@ -54,17 +51,4 @@ class UserController:
             )
         return success_response(
             message=updated_pin["message"], status_code=HTTPStatus.OK
-        )
-
-    async def change_password(
-        self, id: str, user_data: ChangeUserPasswordRequest
-    ) -> tuple:
-        updated_password = await self.user_service.change_password(id, user_data)
-        if not updated_password["is_success"]:
-            return error_response(
-                message=updated_password["message"], status_code=HTTPStatus.BAD_REQUEST
-            )
-        return success_response(
-            message=updated_password["message"],
-            status_code=HTTPStatus.OK,
         )

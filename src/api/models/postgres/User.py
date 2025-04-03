@@ -1,5 +1,3 @@
-import uuid
-
 from django.db import models
 
 from ._base import PostgresBaseModel
@@ -7,13 +5,8 @@ from .StateLGA import StateLGA
 
 
 class User(PostgresBaseModel):
-    id: models.CharField = models.CharField(
-        max_length=255,
-        primary_key=True,
-        default=uuid.uuid4,  # type: ignore
-    )
+    id: models.CharField = models.CharField(max_length=255, primary_key=True)
     email: models.EmailField = models.EmailField(max_length=255, unique=True)
-    password: models.CharField = models.CharField(max_length=255)
     first_name: models.CharField = models.CharField(max_length=255)
     last_name: models.CharField = models.CharField(max_length=255)
     address: models.CharField = models.CharField(max_length=255)
@@ -24,8 +17,6 @@ class User(PostgresBaseModel):
     profile_picture: models.CharField = models.CharField(max_length=255)
     tier: models.IntegerField = models.IntegerField(default=1)
     pin: models.CharField = models.CharField(max_length=10)
-    password_reset_token: models.CharField = models.CharField(max_length=255)
-    token_expires_at: models.DateTimeField = models.DateTimeField(null=True)
     is_validated: models.BooleanField = models.BooleanField(default=False)
     is_active: models.BooleanField = models.BooleanField(default=False)
     is_enabled: models.BooleanField = models.BooleanField(default=False)
