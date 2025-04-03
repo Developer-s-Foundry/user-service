@@ -2,16 +2,17 @@ from typing import Annotated
 
 from django.utils import timezone
 
-from src.api.constants.activity_types import ACTIVITY_TYPES
-from src.api.constants.messages import DYNAMIC_MESSAGES, MESSAGES
-from src.api.models.payload.requests.PasswordResetRequest import (
-    ConfirmPasswordResetRequest, PasswordResetRequest)
-from src.api.repositories.PasswordResetRepository import \
-    PasswordResetRepository
-from src.api.repositories.UserRepository import UserRepository
-from src.api.typing.UserSuccess import UserSuccess
-from src.utils.logger import Logger
 from src.utils.svcs import Service
+from src.utils.logger import Logger
+from src.api.constants.messages import MESSAGES, DYNAMIC_MESSAGES
+from src.api.typing.UserSuccess import UserSuccess
+from src.api.constants.activity_types import ACTIVITY_TYPES
+from src.api.repositories.UserRepository import UserRepository
+from src.api.repositories.PasswordResetRepository import PasswordResetRepository
+from src.api.models.payload.requests.PasswordResetRequest import (
+    PasswordResetRequest,
+    ConfirmPasswordResetRequest,
+)
 
 from .UtilityService import UtilityService
 

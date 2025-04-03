@@ -1,14 +1,16 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from src.api.constants.messages import DYNAMIC_MESSAGES, MESSAGES
-from src.api.models.payload.requests.Pin import Pin
-from src.api.models.payload.requests.UpdateUserRequest import (
-    ChangeUserPasswordRequest, UpdateUserRequest)
+from src.utils.svcs import Service
+from src.utils.logger import Logger
+from src.api.constants.messages import MESSAGES, DYNAMIC_MESSAGES
 from src.api.services.UserService import UserService
 from src.api.utils.response_format import error_response, success_response
-from src.utils.logger import Logger
-from src.utils.svcs import Service
+from src.api.models.payload.requests.Pin import Pin
+from src.api.models.payload.requests.UpdateUserRequest import (
+    UpdateUserRequest,
+    ChangeUserPasswordRequest,
+)
 
 
 @Service()

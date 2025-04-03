@@ -1,5 +1,5 @@
-from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
 from src.api.models.postgres import User
+from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
 
 from ._base import BaseRepository
 

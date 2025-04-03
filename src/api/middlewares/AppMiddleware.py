@@ -7,7 +7,6 @@ from ninja.security import HttpBearer
 
 from src.env import jwt_config
 from src.utils.logger import Logger
-from src.utils.svcs import Service
 
 
 class Authentication(HttpBearer):

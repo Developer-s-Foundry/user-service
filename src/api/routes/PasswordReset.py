@@ -1,15 +1,19 @@
 from http import HTTPStatus
 
-from django.http import HttpRequest
 from ninja import Router
+from django.http import HttpRequest
 
-from src.api.controllers.PasswordResetController import PasswordResetController
-from src.api.models.payload.requests.PasswordResetRequest import (
-    ConfirmPasswordResetRequest, PasswordResetRequest)
-from src.api.models.payload.responses.ErrorResponse import (
-    ErrorResponse, ServerErrorResponse)
-from src.api.models.payload.responses.SuccessResponse import SuccessResponse
 from src.utils.svcs import ADepends
+from src.api.controllers.PasswordResetController import PasswordResetController
+from src.api.models.payload.responses.ErrorResponse import (
+    ErrorResponse,
+    ServerErrorResponse,
+)
+from src.api.models.payload.responses.SuccessResponse import SuccessResponse
+from src.api.models.payload.requests.PasswordResetRequest import (
+    PasswordResetRequest,
+    ConfirmPasswordResetRequest,
+)
 
 router = Router()
 

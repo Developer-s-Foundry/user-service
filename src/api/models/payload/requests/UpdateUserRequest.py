@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import Field, BaseModel
 
 from src.api.typing.PasswordValidator import IsStrongPassword
 

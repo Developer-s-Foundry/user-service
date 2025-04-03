@@ -1,5 +1,5 @@
-from collections.abc import Callable
 from typing import TypedDict
+from collections.abc import Callable
 
 
 class RegistrationMessages(TypedDict):
