@@ -60,7 +60,6 @@ class UtilityService:
     @staticmethod
     def sanitize_user_object(user: User | None = None) -> User:  # type: ignore
         if user:
-            del user.password
             del user.pin
 
             return user

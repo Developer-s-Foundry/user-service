@@ -12,10 +12,7 @@ from src.api.models.payload.responses.ErrorResponse import (
     ServerErrorResponse,
 )
 from src.api.models.payload.responses.SuccessResponse import SuccessResponse
-from src.api.models.payload.requests.UpdateUserRequest import (
-    UpdateUserRequest,
-    ChangeUserPasswordRequest,
-)
+from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
 
 router = Router()
 
@@ -60,19 +57,3 @@ async def update_user(request: HttpRequest, user_data: UpdateUserRequest) -> tup
     user_id = getattr(request, "auth_id", "")
     user_controller = await ADepends(UserController)
     return await user_controller.update_user(user_id, user_data)
-
-
-@router.put(
-    "/change-password",
-    response={
-        HTTPStatus.OK: SuccessResponse,
-        HTTPStatus.BAD_REQUEST: ErrorResponse,
-        HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
-    },
-)
-async def update_password(
-    request: HttpRequest, user_data: ChangeUserPasswordRequest
-) -> tuple:
-    user_id = getattr(request, "auth_id", "")
-    user_controller = await ADepends(UserController)
-    return await user_controller.change_password(user_id, user_data)
