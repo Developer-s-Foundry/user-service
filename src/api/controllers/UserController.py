@@ -55,8 +55,7 @@ class UserController:
         )
 
     async def change_password(self, id: str, user_data: ChangeUserPasswordRequest) -> tuple:
-        user_data._id = id
-        updated_password = await self.user_service.change_password(user_data)
+        updated_password = await self.user_service.change_password(id, user_data)
         if not updated_password["is_success"]:
             return error_response(
                 message=updated_password["message"], status_code=HTTPStatus.BAD_REQUEST

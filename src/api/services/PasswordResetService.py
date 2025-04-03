@@ -2,6 +2,8 @@ from typing import Annotated
 
 from django.utils import timezone
 
+from src.api.constants.activity_types import ACTIVITY_TYPES
+from src.api.constants.messages import DYNAMIC_MESSAGES, MESSAGES
 from src.api.models.payload.requests.PasswordResetRequest import (
     ConfirmPasswordResetRequest, PasswordResetRequest)
 from src.api.repositories.PasswordResetRepository import \
@@ -29,19 +31,19 @@ class PasswordResetService:
         if not existing_user:
             self.logger.warn(
                 {
-                    "activity_type": "Request for password reset",
-                    "message": "User doesn't exist",
+                    "activity_type": ACTIVITY_TYPES['REQUEST_RESET_PASSWORD'],
+                    "message": MESSAGES['USER']["DOESNT_EXIST"],
                     "metadata": {"user": {"email": req.email}},
                 }
             )
             return {
                 "is_success": False,
-                "message": "You don't have an account with us yet!",
+                "message": MESSAGES["PASSWORD_RESET"]["DOESNT_EXIST"],
             }
         elif not existing_user.is_active:
             self.logger.info(
                 {
-                    "activity_type": "Request for password reset",
+                    "activity_type": ACTIVITY_TYPES["REQUEST_RESET_PASSWORD"],
                     "message": "User is not active",
                     "metadata": {"user": {"email": req.email}},
                 }
@@ -53,7 +55,7 @@ class PasswordResetService:
         elif not existing_user.is_enabled:
             self.logger.info(
                 {
-                    "activity_type": "Request for password reset",
+                    "activity_type": ACTIVITY_TYPES["REQUEST_RESET_PASSWORD"],
                     "message": "User is not enabled",
                     "metadata": {"user": {"email": req.email}},
                 }
@@ -71,14 +73,14 @@ class PasswordResetService:
 
         self.logger.info(
             {
-                "activity_type": "Request for password reset",
+                "activity_type": ACTIVITY_TYPES['REQUEST_RESET_PASSWORD'],
                 "message": "Password reset token set",
                 "metadata": {"user": {"email": req.email}, "reset_token": existing_user.password_reset_token},
             }
         )
         return {
             "is_success": True,
-            "message": f"Password reset email has been sent to {req.email}",
+            "message": DYNAMIC_MESSAGES["PASSWORD_RESET"]["EMAIL_SENT"](req.email),
         }
 
 
@@ -125,17 +127,17 @@ class PasswordResetService:
             self.logger.warn(
                 {
                     "activity_type": "Confirm password reset",
-                    "message": "Token has expired",
+                    "message": MESSAGES["PASSWORD_RESET"]["TOKEN_EXPIRED"],
                     "metadata": {"token": req.reset_token},
                 }
             )
             return {
                 "is_success": False,
-                "message": "Password reset token has expired!",
+                "message": MESSAGES["PASSWORD_RESET"]["TOKEN_EXPIRED"],
             }
         new_password_hash = await self.utility_service.hash_string(req.new_password)
         await UserRepository.update_by_user(existing_user, {"password": new_password_hash})
-        message = "Password reset successful!"
+        message = MESSAGES["PASSWORD_RESET"]["PASSWORD_RESET"]
         self.logger.info(
             {
                 "activity_type": "Confirm password reset",

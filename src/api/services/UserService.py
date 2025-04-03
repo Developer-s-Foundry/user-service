@@ -1,8 +1,7 @@
 from typing import Annotated
 
 from src.api.constants.activity_types import ACTIVITY_TYPES
-from src.api.constants.messages import (DYNAMIC_MESSAGES, DYNAMIC_MESSSAGES,
-                                        MESSAGES)
+from src.api.constants.messages import DYNAMIC_MESSAGES, MESSAGES
 from src.api.models.payload.requests.UpdateUserRequest import (
     ChangeUserPasswordRequest, UpdateUserRequest)
 from src.api.models.postgres import User
@@ -115,8 +114,7 @@ class UserService:
 
         return {"is_success": True, "user": user}
 
-    async def change_password(self, req: ChangeUserPasswordRequest) -> UserSuccess:
-        id = req._id
+    async def change_password(self, id: str, req: ChangeUserPasswordRequest) -> UserSuccess:
         existing_user = await UserRepository.find_by_id(id)
         old_password = req.old_password
         new_password = req.new_password
@@ -125,7 +123,7 @@ class UserService:
             self.logger.warn(
                 {
                     "activity_type": ACTIVITY_TYPES["CHANGE_PASSWORD"],
-                    "message": DYNAMIC_MESSSAGES["COMMON"]["FETCHED_FAILED"]("User"),
+                    "message": DYNAMIC_MESSAGES["COMMON"]["FETCHED_FAILED"]("User"),
                     "metadata": {"user": {"id": id}},
                 }
             )

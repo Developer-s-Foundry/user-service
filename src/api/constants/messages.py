@@ -57,6 +57,13 @@ class CommonMessages(TypedDict):
     JWT_GENERATED: str
     VALIDATION_ERROR: str
 
+class PasswordResetMessages(TypedDict):
+    EMAIL_SENT: str
+    INVALID_TOKEN: str
+    TOKEN_EXPIRED: str
+    PASSWORD_RESET: str
+    DOESNT_EXIST: str
+
 
 class Messages(TypedDict):
     REGISTRATION: RegistrationMessages
@@ -67,6 +74,7 @@ class Messages(TypedDict):
     NOK: NextOfKinMessages
     KYC: KYCInformationMessages
     COMMON: CommonMessages
+    PASSWORD_RESET: PasswordResetMessages
 
 
 class DynamicCommonMessages(TypedDict):
@@ -80,9 +88,15 @@ class DynamicAccountMessages(TypedDict):
     EXISTS: Callable[[str], str]
 
 
+
+class DynamicPasswordResetMessages(TypedDict):
+    EMAIL_SENT: Callable[[str], str]
+
+
 class DynamicMessages(TypedDict):
     COMMON: DynamicCommonMessages
     ACCOUNT: DynamicAccountMessages
+    PASSWORD_RESET: DynamicPasswordResetMessages
 
 
 MESSAGES: Messages = {
@@ -134,6 +148,13 @@ MESSAGES: Messages = {
         "JWT_GENERATED": "JWT was generated",
         "VALIDATION_ERROR": "Validation errors",
     },
+    "PASSWORD_RESET": {
+        "EMAIL_SENT": "Password reset email sent successfully to your email",
+        "PASSWORD_RESET": "Password reset successfully",
+        "INVALID_TOKEN": "Invalid password reset token!",
+        "DOESNT_EXIST": "You don't have an account with us yet!",
+        "TOKEN_EXPIRED": "Password reset token has expired!",
+    }
 }
 
 DYNAMIC_MESSAGES: DynamicMessages = {
@@ -146,6 +167,9 @@ DYNAMIC_MESSAGES: DynamicMessages = {
     "ACCOUNT": {
         "EXISTS": lambda x: f"You already have an account with the account number {x}!"
     },
+    "PASSWORD_RESET": {
+        "EMAIL_SENT": lambda x: f"Password reset email has been sent to {x}",
+    }
 }
 
 __all__ = ["DYNAMIC_MESSAGES", "MESSAGES"]

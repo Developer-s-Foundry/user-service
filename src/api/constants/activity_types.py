@@ -18,7 +18,8 @@ class ActivityTypes(TypedDict):
     FETCH_WITHDRAW_ACCOUNT: str
     DELETE_WITHDRAW_ACCOUNT: str
     CHANGE_PASSWORD: str
-    RESET_PASSWORD: str
+    REQUEST_RESET_PASSWORD: str
+    CONFIRM_RESET_PASSWORD: str
     FETCH_NOK: str
     UPDATE_NOK: str
     FETCH_KYC: str
@@ -42,7 +43,8 @@ ACTIVITY_TYPES: ActivityTypes = {
     "FETCH_WITHDRAW_ACCOUNT": "Get withdraw account",
     "DELETE_WITHDRAW_ACCOUNT": "Delete withdraw account",
     "CHANGE_PASSWORD": "Change user password",
-    "RESET_PASSWORD": "Reset user password",
+    "REQUEST_RESET_PASSWORD": "Request for password reset",
+    "CONFIRM_RESET_PASSWORD": "Confirm password reset",
     "FETCH_NOK": "Fetch Next Of Kin",
     "UPDATE_NOK": "Update Next Of Kin",
     "FETCH_KYC": "Fetch KYC Information",

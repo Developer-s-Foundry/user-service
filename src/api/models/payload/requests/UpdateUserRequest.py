@@ -14,6 +14,5 @@ class UpdateUserRequest(BaseModel):
 
 
 class ChangeUserPasswordRequest(BaseModel):
-    _id: str
     old_password: str
     new_password: IsStrongPassword
