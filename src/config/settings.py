@@ -2,10 +2,9 @@ from src.env import app
 
 from .apps import INSTALLED_APPS as INSTALLED_APPS
 from .caches import CACHES as CACHES
-from .logger import LOGGING as LOGGING
-from .databases import DATABASES as DATABASES
 from .databases import DATABASE_ROUTERS as DATABASE_ROUTERS
-from .templates import TEMPLATES as TEMPLATES
+from .databases import DATABASES as DATABASES
+from .logger import LOGGING as LOGGING
 from .middleware import MIDDLEWARE as MIDDLEWARE
 
 SECRET_KEY = app["secret_key"]

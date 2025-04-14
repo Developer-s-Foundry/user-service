@@ -1,18 +1,15 @@
 from http import HTTPStatus
 
-from ninja import Router
 from django.http import HttpRequest
-
-from src.utils.svcs import ADepends
+from ninja import Router
 from src.api.controllers.UserController import UserController
 from src.api.models.payload.requests.Pin import Pin
-from src.api.models.payload.responses.User import UserResponse
-from src.api.models.payload.responses.ErrorResponse import (
-    ErrorResponse,
-    ServerErrorResponse,
-)
-from src.api.models.payload.responses.SuccessResponse import SuccessResponse
 from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
+from src.api.models.payload.responses.ErrorResponse import (
+    ErrorResponse, ServerErrorResponse)
+from src.api.models.payload.responses.SuccessResponse import SuccessResponse
+from src.api.models.payload.responses.User import UserResponse
+from src.utils.svcs import ADepends
 
 router = Router()
 

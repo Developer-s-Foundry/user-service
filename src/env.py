@@ -1,7 +1,7 @@
 from typing import TypedDict
 
-from src import __name__, __version__, __description__, __display_name__
-from src.utils.env import get_env_int, get_env_str, get_env_list
+from src import __description__, __display_name__, __name__, __version__
+from src.utils.env import get_env_int, get_env_list, get_env_str
 
 
 class Env:
@@ -98,6 +98,11 @@ jwt_config: JWT = {
     "issuer": get_env_str("JWT_ISSUER"),
 }
 
+api_gateway = {
+    "key": get_env_str("API_GATEWAY_PUBLIC_KEY"),
+    "expires_at": get_env_int("API_KEY_EXPIRES_AT"),
+}
+
 otp: OTP = {"lifetime": get_env_int("OTP_LIFETIME")}
 
-__all__ = ["app", "cache", "db", "env", "jwt_config", "log", "otp"]
+__all__ = ["app", "cache", "db", "env", "jwt_config", "log", "otp", "api_gateway"]
