@@ -1,9 +1,11 @@
-from django.http import HttpRequest
+from typing import _T
+
 from ninja import NinjaAPI
-# from src.api.middlewares.AppMiddleware import authentication
-from src.api.middlewares.GateWayMiddleware import (add_global_headers,
-                                                   authentication)
+from django.http import HttpRequest
+from ninja.openapi.schema import OpenAPISchema
+
 from src.env import app
+from src.api.middlewares.GateWayMiddleware import authentication, add_global_headers
 
 api: NinjaAPI = NinjaAPI(
     version=app["version"],
@@ -14,16 +16,17 @@ api: NinjaAPI = NinjaAPI(
 
 original_get_openapi_schema = api.get_openapi_schema
 
-def custom_openapi_schema(path_params=None):
+
+def custom_openapi_schema(path_params: _T | None = None) -> OpenAPISchema:
     schema = original_get_openapi_schema()
 
-    schema['components']['securitySchemes'] = {
+    schema["components"]["securitySchemes"] = {
         "Gateway Key": {
             "type": "apiKey",
             "in": "header",
             "name": "X-API-GATEWAY-KEY",
         },
-           "API Timestamp": {
+        "API Timestamp": {
             "type": "apiKey",
             "in": "header",
             "name": "X-API-GATEWAY-TIMESTAMP",
@@ -42,7 +45,7 @@ def custom_openapi_schema(path_params=None):
             "type": "apiKey",
             "in": "header",
             "name": "X-USER-EMAIL",
-        }
+        },
     }
 
     schema["security"] = [
@@ -51,12 +54,13 @@ def custom_openapi_schema(path_params=None):
             "API Timestamp": [],
             "API Signature": [],
             "User ID": [],
-            "User Email": []
+            "User Email": [],
         }
     ]
 
     schema = add_global_headers(schema)
     return schema
+
 
 setattr(api, "get_openapi_schema", custom_openapi_schema)
 
@@ -68,12 +72,8 @@ async def home(request: HttpRequest) -> dict:
     return {"message": "Hello, World!"}
 
 
-api.add_router(
-    "/users", "src.api.routes.User.router", tags=["User"]
-)
-api.add_router(
-    "/kyc", "src.api.routes.UserKYC.router", tags=["User KYC"]
-)
+api.add_router("/users", "src.api.routes.User.router", tags=["User"])
+api.add_router("/kyc", "src.api.routes.UserKYC.router", tags=["User KYC"])
 api.add_router(
     "/next-of-kin",
     "src.api.routes.UserNOK.router",
