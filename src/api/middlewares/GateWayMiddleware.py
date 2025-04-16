@@ -16,8 +16,7 @@ class GateWayAuth(APIKeyHeader):
         self.logger = logger
         super().__init__()
 
-    def authenticate(self, request: HttpRequest, key: str | None ) -> str | None:
-
+    def authenticate(self, request: HttpRequest, key: str | None) -> str | None:
         try:
             api_key = request.headers["X-API-GATEWAY-KEY"]
             api_timestamp = request.headers["X-API-GATEWAY-TIMESTAMP"]
@@ -84,7 +83,6 @@ class GateWayAuth(APIKeyHeader):
         initial_time = datetime.fromtimestamp(int(timestamp) / 1000)
         valid_window = initial_time + timedelta(minutes=api_gateway["expires_at"])
         if valid_window < datetime.now():
-        
             message = "Signature expired!"
             self.logger.error(
                 {

@@ -15,7 +15,7 @@ api: NinjaAPI = NinjaAPI(
 original_get_openapi_schema = api.get_openapi_schema
 
 
-def custom_openapi_schema(path_params: dict| None =None) -> OpenAPISchema:
+def custom_openapi_schema(path_params: dict | None = None) -> OpenAPISchema:
     schema = original_get_openapi_schema()
 
     schema["components"]["securitySchemes"] = {
