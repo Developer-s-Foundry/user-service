@@ -98,6 +98,11 @@ jwt_config: JWT = {
     "issuer": get_env_str("JWT_ISSUER"),
 }
 
+api_gateway = {
+    "key": get_env_str("API_GATEWAY_PUBLIC_KEY"),
+    "expires_at": get_env_int("API_KEY_EXPIRES_AT"),
+}
+
 otp: OTP = {"lifetime": get_env_int("OTP_LIFETIME")}
 
-__all__ = ["app", "cache", "db", "env", "jwt_config", "log", "otp"]
+__all__ = ["api_gateway", "app", "cache", "db", "env", "jwt_config", "log", "otp"]
