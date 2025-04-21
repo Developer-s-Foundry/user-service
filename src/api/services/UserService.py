@@ -1,5 +1,7 @@
 from typing import Annotated
 
+from faststream.rabbit import RabbitRouter
+
 from src.utils.svcs import Service
 from src.utils.logger import Logger
 from src.api.models.postgres import User
@@ -7,9 +9,12 @@ from src.api.constants.messages import MESSAGES, DYNAMIC_MESSAGES
 from src.api.typing.UserSuccess import UserSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
 from src.api.repositories.UserRepository import UserRepository
+from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
 from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
 
 from .UtilityService import UtilityService
+
+UserRouter = RabbitRouter()
 
 
 @Service()
@@ -112,3 +117,60 @@ class UserService:
         user = self.utility_service.sanitize_user_object(updated_user)
 
         return {"is_success": True, "user": user}
+
+
+    @staticmethod
+    @UserRouter.subscriber("create-user")
+    async def register(message: dict) -> None:
+        logger = Logger('UserService')
+        user_data = CreateUserRequest(
+            id=message["id"],
+            email=message["email"],
+            first_name='',
+            last_name='',
+            address='',
+            phone_number='',
+            profile_picture='',
+            pin='',
+        )
+        new_user = await UserRepository.add(user_data)
+
+        logger.info(
+            {
+                "activity_type": ACTIVITY_TYPES["USER_REGISTRATION"],
+                "message": MESSAGES["REGISTRATION"]["USER_REGISTERED"],
+                "metadata": {
+                    "user": {"id": new_user.id, "email": new_user.email}
+                },
+            }
+        )
+
+    @staticmethod
+    @UserRouter.subscriber("validate-user")
+    async def validate_user(message: dict) -> None:
+        logger = Logger('UserService')
+        user = await UserRepository.find_by_id(message["id"])
+
+        if not user:
+            logger.warn(
+                {
+                    "activity_type": ACTIVITY_TYPES["EMAIL_VALIDATION"],
+                    "message": DYNAMIC_MESSAGES["COMMON"]["FETCHED_FAILED"]("User"),
+                    "metadata": {"user": {"id": message["id"]}},
+                }
+            )
+            return 
+        
+        await UserRepository.update_by_user(
+            user, {"is_active": True, "is_enabled": True, "is_validated": True}
+        )
+
+        logger.info(
+            {
+                "activity_type": ACTIVITY_TYPES["EMAIL_VALIDATION"],
+                "message": MESSAGES["REGISTRATION"]["VERIFICATION_SUCCESS"],
+                "metadata": {
+                    "user": {"id": user.id, "email": user.email}
+                },
+            }
+        )
