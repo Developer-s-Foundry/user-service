@@ -51,7 +51,7 @@ class OTP(TypedDict):
 
 
 class RabbitMQ(TypedDict):
-    host: str
+    url: str
 
 
 env = Env()
@@ -109,7 +109,7 @@ api_gateway = {
 
 otp: OTP = {"lifetime": get_env_int("OTP_LIFETIME")}
 
-rabbitmq_config: RabbitMQ = {"host": get_env_str("RABBITMQ_HOST")}
+rabbitmq_config: RabbitMQ = {"url": get_env_str("RABBITMQ_URL")}
 
 
 __all__ = [
