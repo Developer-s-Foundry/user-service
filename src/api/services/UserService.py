@@ -2,15 +2,16 @@ from typing import Annotated
 
 from faststream.rabbit import RabbitRouter
 
-from src.utils.svcs import Service
-from src.utils.logger import Logger
-from src.api.models.postgres import User
-from src.api.constants.messages import MESSAGES, DYNAMIC_MESSAGES
-from src.api.typing.UserSuccess import UserSuccess
 from src.api.constants.activity_types import ACTIVITY_TYPES
-from src.api.repositories.UserRepository import UserRepository
+from src.api.constants.messages import DYNAMIC_MESSAGES, MESSAGES
+from src.api.constants.queues import QUEUE_NAMES
 from src.api.models.payload.requests.CreateUserRequest import CreateUserRequest
 from src.api.models.payload.requests.UpdateUserRequest import UpdateUserRequest
+from src.api.models.postgres import User
+from src.api.repositories.UserRepository import UserRepository
+from src.api.typing.UserSuccess import UserSuccess
+from src.utils.logger import Logger
+from src.utils.svcs import Service
 
 from .UtilityService import UtilityService
 
@@ -119,7 +120,7 @@ class UserService:
         return {"is_success": True, "user": user}
 
     @staticmethod
-    @UserRouter.subscriber("create-user")
+    @UserRouter.subscriber(queue=QUEUE_NAMES["USER_REGISTRATION"])
     async def register(message: dict) -> None:
         logger = Logger("UserService")
         user_data = CreateUserRequest(
@@ -143,7 +144,7 @@ class UserService:
         )
 
     @staticmethod
-    @UserRouter.subscriber("validate-user")
+    @UserRouter.subscriber(queue=QUEUE_NAMES["EMAIL_VALIDATION"])
     async def validate_user(message: dict) -> None:
         logger = Logger("UserService")
         user = await UserRepository.find_by_id(message["id"])
