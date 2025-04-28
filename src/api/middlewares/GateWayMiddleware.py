@@ -1,12 +1,12 @@
 from django.http import HttpRequest
 from ninja.errors import AuthenticationError
-from ninja.openapi.schema import OpenAPISchema
 from ninja.security import APIKeyHeader
+from ninja.openapi.schema import OpenAPISchema
 
-from src.api.constants.signature_sources import SIGNATURE_SOURCES
-from src.api.services.UtilityService import SignatureData, UtilityService
 from src.env import api_gateway
 from src.utils.logger import Logger
+from src.api.services.UtilityService import SignatureData, UtilityService
+from src.api.constants.signature_sources import SIGNATURE_SOURCES
 
 
 class GateWayAuth(APIKeyHeader):
@@ -43,7 +43,7 @@ class GateWayAuth(APIKeyHeader):
                 }
             )
             raise AuthenticationError(message=message)
-        
+
         signature_data: SignatureData = {
             "signature": api_signature,
             "timestamp": api_timestamp,
@@ -52,7 +52,9 @@ class GateWayAuth(APIKeyHeader):
             "title": SIGNATURE_SOURCES["gateway"],
         }
 
-        UtilityService.verify_signature(logger=self.logger, signature_data=signature_data)
+        UtilityService.verify_signature(
+            logger=self.logger, signature_data=signature_data
+        )
 
         self.logger.debug(
             {
