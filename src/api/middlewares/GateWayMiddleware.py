@@ -1,7 +1,3 @@
-import hmac
-import hashlib
-from datetime import datetime, timedelta
-
 from django.http import HttpRequest
 from ninja.errors import AuthenticationError
 from ninja.security import APIKeyHeader
@@ -9,6 +5,8 @@ from ninja.openapi.schema import OpenAPISchema
 
 from src.env import api_gateway
 from src.utils.logger import Logger
+from src.api.services.UtilityService import SignatureData, UtilityService
+from src.api.constants.signature_sources import SIGNATURE_SOURCES
 
 
 class GateWayAuth(APIKeyHeader):
@@ -27,7 +25,7 @@ class GateWayAuth(APIKeyHeader):
             message = f"Missing required header: {e}"
             self.logger.error(
                 {
-                    "activity_type": "Authenticate User",
+                    "activity_type": "Authenticate Gateway Request",
                     "message": message,
                     "metadata": {"headers": request.headers},
                 }
@@ -39,22 +37,33 @@ class GateWayAuth(APIKeyHeader):
             message = "Invalid API key!"
             self.logger.error(
                 {
-                    "activity_type": "Authenticate User",
+                    "activity_type": "Authenticate Gateway Request",
                     "message": message,
                     "metadata": {"headers": request.headers},
                 }
             )
             raise AuthenticationError(message=message)
 
-        self._verify_signature(valid_api_key, api_signature, api_timestamp)
+        signature_data: SignatureData = {
+            "signature": api_signature,
+            "timestamp": api_timestamp,
+            "key": valid_api_key,
+            "ttl": api_gateway["ttl"],
+            "title": SIGNATURE_SOURCES["gateway"],
+        }
+
+        UtilityService.verify_signature(
+            logger=self.logger, signature_data=signature_data
+        )
 
         self.logger.debug(
             {
-                "activity_type": "Authenticate User",
-                "message": "Successfully authenticated user",
+                "activity_type": "Authenticate Gateway Request",
+                "message": "Successfully authenticated gateway request",
                 "metadata": {
                     "user_id": user_id,
                     "user_email": user_email,
+                    "headers": request.headers,
                 },
             }
         )
@@ -62,44 +71,6 @@ class GateWayAuth(APIKeyHeader):
         setattr(request, "auth_id", user_id)
 
         return api_signature
-
-    def _verify_signature(
-        self, valid_api_key: str, signature: str, timestamp: str
-    ) -> bool:
-        valid_signature = self.generate_signature(valid_api_key, timestamp)
-        is_valid = hmac.compare_digest(valid_signature, signature)
-
-        if not is_valid:
-            message = "Invalid signature!"
-            self.logger.error(
-                {
-                    "activity_type": "Authenticate User",
-                    "message": message,
-                    "metadata": {"signature": signature},
-                }
-            )
-            raise AuthenticationError(message=message)
-
-        initial_time = datetime.fromtimestamp(int(timestamp) / 1000)
-        valid_window = initial_time + timedelta(minutes=api_gateway["expires_at"])
-        if valid_window < datetime.now():
-            message = "Signature expired!"
-            self.logger.error(
-                {
-                    "activity_type": "Authenticate User",
-                    "message": message,
-                    "metadata": {"timestamp": timestamp},
-                }
-            )
-            raise AuthenticationError(message=message)
-
-        return True
-
-    def generate_signature(self, api_key: str, timestamp: str) -> str:
-        signature = hmac.new(
-            key=api_key.encode(), msg=timestamp.encode(), digestmod=hashlib.sha256
-        ).hexdigest()
-        return signature
 
 
 def get_authentication() -> GateWayAuth:

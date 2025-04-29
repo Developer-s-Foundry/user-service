@@ -1,8 +1,12 @@
 from pydantic import EmailStr, BaseModel
 
-from src.api.typing.PasswordValidator import IsStrongPassword
-
 
 class CreateUserRequest(BaseModel):
+    id: str
     email: EmailStr
-    password: IsStrongPassword
+    first_name: str
+    last_name: str
+    address: str
+    phone_number: str
+    profile_picture: str
+    pin: str
