@@ -70,15 +70,15 @@ async def home(request: HttpRequest) -> dict:
     return {"message": "Hello, World!"}
 
 
-api.add_router("/users", "src.api.routes.User.router", tags=["User"])
-api.add_router("/kyc", "src.api.routes.UserKYC.router", tags=["User KYC"])
+api.add_router("/users/profile", "src.api.routes.User.router", tags=["User"])
+api.add_router("/users/kyc", "src.api.routes.UserKYC.router", tags=["User KYC"])
 api.add_router(
-    "/next-of-kin",
+    "/users/next-of-kin",
     "src.api.routes.UserNOK.router",
     tags=["User NOK"],
 )
 api.add_router(
-    "/withdrawal-accounts",
+    "/users/withdrawal-accounts",
     "src.api.routes.WithdrawalAccount.router",
     tags=["User"],
 )

@@ -105,10 +105,11 @@ class UserService:
             id, req.model_dump(exclude_unset=True)
         )
 
+        message = MESSAGES["USER"]["UPDATED"]
         self.logger.info(
             {
                 "activity_type": ACTIVITY_TYPES["UPDATE_USER"],
-                "message": MESSAGES["USER"]["UPDATED"],
+                "message": message,
                 "metadata": {
                     "user": {"id": id},
                     "new_data": req.model_dump(exclude_unset=True),
@@ -117,7 +118,7 @@ class UserService:
         )
         user = self.utility_service.sanitize_user_object(updated_user)
 
-        return {"is_success": True, "user": user}
+        return {"is_success": True, "message": message, "user": user}
 
     @staticmethod
     @UserRouter.subscriber(queue=QUEUE_NAMES["USER_REGISTRATION"])

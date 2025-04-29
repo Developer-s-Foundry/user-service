@@ -2,7 +2,7 @@ import hmac
 import hashlib
 from uuid import uuid4
 from typing import TypedDict
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import jwt
 import bcrypt
@@ -123,10 +123,10 @@ class UtilityService:
             )
             raise AuthenticationError(message=message)
 
-        initial_time = datetime.fromtimestamp(float(timestamp) / 1000)
+        initial_time = datetime.fromtimestamp(float(timestamp), UTC)
         valid_window = initial_time + timedelta(minutes=ttl)
 
-        if valid_window < datetime.now():
+        if valid_window < datetime.now(UTC):
             message = "Signature expired!"
             logger.error(
                 {
@@ -141,5 +141,5 @@ class UtilityService:
 
     @staticmethod
     def get_timestamp() -> str:
-        current_time = datetime.now().timestamp() * 1000
+        current_time = datetime.now(UTC).timestamp()
         return str(current_time)
