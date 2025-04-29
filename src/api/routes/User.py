@@ -35,7 +35,7 @@ async def set_account_pin(request: HttpRequest, user_pin: Pin) -> tuple:
     "/",
     response={
         HTTPStatus.OK: SuccessResponse[UserResponse],
-        HTTPStatus.BAD_REQUEST: ErrorResponse,
+        HTTPStatus.NOT_FOUND: ErrorResponse,
         HTTPStatus.INTERNAL_SERVER_ERROR: ServerErrorResponse,
     },
 )
